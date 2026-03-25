@@ -19,21 +19,29 @@ public class RegistrarUsuario {
 
     public RegistrarUsuarioResponse ejecutar(RegistrarUsuarioRequest request) {
 
-        // 1. Validaciones básicas (Use Case)
-        if (request.getCorreo() == null || request.getCorreo().isBlank()) {
-            throw new RuntimeException("Correo obligatorio");
+        // Validar campos obligatorios
+        if (esCampoVacio(request.getNombre()) ||
+                esCampoVacio(request.getCorreo()) ||
+                esCampoVacio(request.getContrasena()) ||
+                esCampoVacio(request.getTelefono())) {
+
+            throw new RuntimeException("Todos los campos son obligatorios");
         }
 
-        if (request.getContrasena().length() < 8) {
-            throw new RuntimeException("La contraseña debe tener mínimo 8 caracteres");
+        if (!esCorreoValido(request.getCorreo())) {
+            throw new RuntimeException("Formato de correo inválido");
         }
 
-        // 2. Regla del sistema → correo único
+        if (!esContrasenaValida(request.getContrasena())) {
+            throw new RuntimeException(
+                    "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial");
+        }
+
         if (usuarioRepository.buscarPorCorreo(request.getCorreo()) != null) {
             throw new RuntimeException("El correo ya está registrado");
         }
 
-        // 3. Crear entidad (dominio)
+        // Crear entidad (dominio)
         String id = UUID.randomUUID().toString();
 
         Usuario usuario = new Usuario(
@@ -43,13 +51,36 @@ public class RegistrarUsuario {
                 request.getContrasena(),
                 request.getTelefono());
 
-        // 4. Guardar
+        // Guardar
         usuarioRepository.guardar(usuario);
 
-        // 5. Retornar respuesta
+        // Retornar respuesta
         return new RegistrarUsuarioResponse(
                 usuario.getId(),
                 usuario.getNombre(),
                 usuario.getCorreo());
+    }
+
+    // Validaciones
+
+    private boolean esCampoVacio(String campo) {
+        return campo == null || campo.isBlank();
+    }
+
+    private boolean esCorreoValido(String correo) {
+        return correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+    }
+
+    private boolean esContrasenaValida(String contrasena) {
+        if (contrasena.length() < 8) {
+            return false;
+        }
+
+        boolean tieneMayuscula = contrasena.matches(".*[A-Z].*");
+        boolean tieneMinuscula = contrasena.matches(".*[a-z].*");
+        boolean tieneNumero = contrasena.matches(".*\\d.*");
+        boolean tieneEspecial = contrasena.matches(".*[@$!%*?&].*");
+
+        return tieneMayuscula && tieneMinuscula && tieneNumero && tieneEspecial;
     }
 }

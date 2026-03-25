@@ -31,7 +31,7 @@ public class UsuarioController {
         }
     }
 
-    // LOGIN (para cuando lo implementes)
+    // LOGIN 
     /*
      * @PostMapping("/login")
      * public LoginResponse login(@RequestBody LoginRequest request) {
