@@ -1,5 +1,6 @@
 package com.fabrica.gestionfinancierapersonal.interfaces.controllers;
 
+import com.fabrica.gestionfinancierapersonal.application.usecases.LoginUsuario;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -7,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioRequest;
+import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.usecases.RegistrarUsuario;
@@ -15,13 +18,15 @@ import com.fabrica.gestionfinancierapersonal.application.usecases.RegistrarUsuar
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
+    private final LoginUsuario loginUsuario;
     private final RegistrarUsuario registrarUsuario;
 
-    public UsuarioController(RegistrarUsuario registrarUsuario) {
+    public UsuarioController(RegistrarUsuario registrarUsuario, LoginUsuario loginUsuario) {
         this.registrarUsuario = registrarUsuario;
+        this.loginUsuario = loginUsuario;
     }
 
-    // REGISTRAR USUARIO
+    // Registrar usuario
     @PostMapping
     public RegistrarUsuarioResponse registrar(@RequestBody RegistrarUsuarioRequest request) {
         try {
@@ -31,11 +36,13 @@ public class UsuarioController {
         }
     }
 
-    // LOGIN 
-    /*
-     * @PostMapping("/login")
-     * public LoginResponse login(@RequestBody LoginRequest request) {
-     * return loginUsuario.ejecutar(request);
-     * }
-     */
+    // Login usuario
+    @PostMapping("/login")
+    public LoginUsuarioResponse login(@RequestBody LoginUsuarioRequest request) {
+        try {
+            return loginUsuario.ejecutar(request);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 }

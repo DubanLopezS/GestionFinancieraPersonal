@@ -2,10 +2,10 @@ package com.fabrica.gestionfinancierapersonal.application.dtos;
 
 import java.util.UUID;
 
-public record RegistrarUsuarioResponse(
+public record CrearCuentaRequest(
     UUID idUsuario,
-    String username,
     String nombre,
-    String apellido,
-    String correo) {
-}
+    String tipo,
+    double saldoInicial,
+    String moneda) {
+    }

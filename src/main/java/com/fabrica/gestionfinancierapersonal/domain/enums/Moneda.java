@@ -1,6 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.domain.enums;
 
-public enum TipoCuenta {
-    BANCARIA,
-    EFECTIVO;  
+public enum Moneda {
+COP,
+USD,
+EUR
 }

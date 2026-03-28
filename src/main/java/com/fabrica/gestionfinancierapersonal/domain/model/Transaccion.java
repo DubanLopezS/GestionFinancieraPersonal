@@ -1,31 +1,39 @@
 package com.fabrica.gestionfinancierapersonal.domain.model;
 
 import lombok.Getter;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
-import com.fabrica.gestionfinancierapersonal.domain.enums.TipoGasto;
+import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
+import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 
 @Getter
 public class Transaccion {
 
-    private String id;
+    private UUID idTransaccion;
     private double monto;
-    private TipoGasto tipo;
-    private LocalDate fecha;
+    private TipoTransaccion tipo;
+    private Periodicidad periodicidad;
+    private LocalDateTime fecha;
 
-    public Transaccion(String id, double monto, TipoGasto tipo, LocalDate fecha) {
+    public Transaccion(double monto, TipoTransaccion tipo, Periodicidad periodicidad) {
 
         if (monto <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0");
         }
 
         if (tipo == null) {
-            throw new IllegalArgumentException("Tipo de transacción obligatorio");
+            throw new IllegalArgumentException("El Tipo es obligatorio");
         }
 
-        this.id = id;
+        if (periodicidad == null) {
+            throw new IllegalArgumentException("La Periodicidad es obligatoria");
+        }
+
+        this.idTransaccion = UUID.randomUUID();
         this.monto = monto;
         this.tipo = tipo;
-        this.fecha = fecha != null ? fecha : LocalDate.now();
+        this.periodicidad = periodicidad;
+        this.fecha = LocalDateTime.now();
     }
 }

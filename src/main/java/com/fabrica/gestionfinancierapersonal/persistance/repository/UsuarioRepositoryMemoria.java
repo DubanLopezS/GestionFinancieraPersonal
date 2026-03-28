@@ -9,24 +9,31 @@ import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 @Repository
 public class UsuarioRepositoryMemoria implements UsuarioRepository {
 
-    private final Map<String, Usuario> usuarios = new HashMap<>();
+    private final Map<UUID, Usuario> usuarios = new HashMap<>();
 
     @Override
     public void guardar(Usuario usuario) {
-        usuarios.put(usuario.getId(), usuario);
+        usuarios.put(usuario.getIdUsuario(), usuario);
     }
 
     @Override
-    public Usuario buscarPorId(String id) {
-        return usuarios.get(id);
+    public Optional<Usuario> buscarPorId(UUID idUsuario) {
+        return Optional.ofNullable(usuarios.get(idUsuario));
     }
 
     @Override
-    public Usuario buscarPorCorreo(String correo) {
+    public Optional<Usuario> buscarPorCorreo(String correo) {
         return usuarios.values()
                 .stream()
                 .filter(u -> u.getCorreo().equals(correo))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
+    }
+
+    @Override
+    public Optional<Usuario> buscarPorUsername(String username) {
+        return usuarios.values()
+                .stream()
+                .filter(u -> u.getUsername().equalsIgnoreCase(username))
+                .findFirst();
     }
 }
