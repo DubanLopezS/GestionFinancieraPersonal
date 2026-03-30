@@ -79,11 +79,4 @@ public class Usuario {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada"));
     }
-
-    public Cuenta buscarCuenta(UUID cuentaId) {
-        return cuentas.stream()
-                .filter(c -> c.getIdCuenta().equals(cuentaId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Cuenta no encontrada"));
-    }
 }

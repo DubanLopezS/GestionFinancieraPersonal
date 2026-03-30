@@ -63,7 +63,7 @@ public class RegistrarTransaccion {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         // Buscar cuenta dentro del usuario
-        Cuenta cuenta = usuario.buscarCuenta(request.idCuenta());
+        Cuenta cuenta = usuario.buscarCuentaPorId(request.idCuenta());
 
         // Crear transacción
         Transaccion transaccion = new Transaccion(
