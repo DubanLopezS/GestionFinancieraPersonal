@@ -12,7 +12,7 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransacci
 import com.fabrica.gestionfinancierapersonal.application.usecases.RegistrarTransaccion;
 
 @RestController
-@RequestMapping("/transaccion")
+@RequestMapping("/api/transaccion")
 public class TransaccionController {
 
     private final RegistrarTransaccion registrarTransaccion;

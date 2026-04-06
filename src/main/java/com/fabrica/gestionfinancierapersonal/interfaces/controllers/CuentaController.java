@@ -10,7 +10,7 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCuentaRespons
 import com.fabrica.gestionfinancierapersonal.application.usecases.CrearCuenta;
 
 @RestController
-@RequestMapping("/cuentas")
+@RequestMapping("/api/cuentas")
 public class CuentaController {
 
     private final CrearCuenta crearCuentaUseCase;

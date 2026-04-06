@@ -15,7 +15,7 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioRe
 import com.fabrica.gestionfinancierapersonal.application.usecases.RegistrarUsuario;
 
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController {
 
     private final LoginUsuario loginUsuario;
@@ -27,7 +27,7 @@ public class UsuarioController {
     }
 
     // Registrar usuario
-    @PostMapping
+    @PostMapping("/signup")
     public RegistrarUsuarioResponse registrar(@RequestBody RegistrarUsuarioRequest request) {
         try {
             return registrarUsuario.ejecutar(request);
