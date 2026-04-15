@@ -76,9 +76,10 @@ public class CrearCuenta {
 
         // Crear cuenta
         Cuenta cuenta = new Cuenta(
-                request.nombre(),
+                request.nombre(), 
                 tipo,
-                moneda);
+                moneda, 
+                usuario);
 
         if (request.saldoInicial() > 0) {
             cuenta.registrarSaldoInicial(request.saldoInicial());

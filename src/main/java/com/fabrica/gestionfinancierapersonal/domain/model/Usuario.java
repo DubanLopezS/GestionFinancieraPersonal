@@ -5,20 +5,40 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.Rol;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
+@Entity
+@Table(name = "usuarios")
 @Getter
 public class Usuario {
 
-    private final UUID idUsuario;
+    @Id
+    private UUID idUsuario;
+
     private String username;
     private String nombre;
     private String apellido;
     private String correo;
     private String contrasena;
     private String telefono;
+
+    @Enumerated(EnumType.STRING)
     private Rol rol;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Cuenta> cuentas;
+
+    protected Usuario() {
+    }
 
     public Usuario(String username, String nombre, String apellido,
             String correo, String contrasena, String telefono) {

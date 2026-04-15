@@ -67,9 +67,10 @@ public class RegistrarTransaccion {
 
         // Crear transacción
         Transaccion transaccion = new Transaccion(
-                request.monto(),
-                tipo,
-                periodicidad);
+            request.monto(), 
+            tipo, 
+            periodicidad, 
+            cuenta);
 
         // Agregar a la cuenta
         cuenta.agregarTransaccion(transaccion);
