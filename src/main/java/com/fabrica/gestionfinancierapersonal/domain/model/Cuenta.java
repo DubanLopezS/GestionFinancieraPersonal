@@ -46,6 +46,7 @@ public class Cuenta {
     @OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL)
     private List<Transaccion> transacciones;
 
+    
     protected Cuenta() {
     }
 

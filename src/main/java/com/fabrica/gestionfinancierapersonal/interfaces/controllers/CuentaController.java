@@ -24,7 +24,8 @@ public class CuentaController {
     public ResponseEntity<CrearCuentaResponse> crearCuenta(@RequestBody CrearCuentaRequest request) {
 
         try {
-            return ResponseEntity.ok(crearCuentaUseCase.ejecutar(request));
+            return ResponseEntity.status(HttpStatus.CREATED)
+        .body(crearCuentaUseCase.ejecutar(request));
 
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

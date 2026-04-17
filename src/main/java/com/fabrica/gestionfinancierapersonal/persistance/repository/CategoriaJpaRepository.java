@@ -7,14 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
-import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
 @Repository
-public interface UsuarioJpaRepository extends JpaRepository<Usuario, UUID> {
+public interface CategoriaJpaRepository extends JpaRepository<Categoria, UUID> {
 
-    Optional<Usuario> findByCorreo(String correo);
-
-    Optional<Usuario> findByUsername(String username);
-
-    Optional<Categoria> findByNombre(String nombre);
+    Optional<Categoria> findByNombreAndUsuario_IdUsuario(String nombre, UUID idUsuario);
 }

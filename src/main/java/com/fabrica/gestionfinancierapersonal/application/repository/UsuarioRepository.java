@@ -14,4 +14,5 @@ public interface UsuarioRepository {
     Optional<Usuario> buscarPorCorreo(String correo);
 
     Optional<Usuario> buscarPorUsername(String username);
+
 }

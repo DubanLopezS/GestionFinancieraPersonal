@@ -48,7 +48,7 @@ public class RegistrarTransaccion {
         try {
             tipo = TipoTransaccion.valueOf(request.tipoTransaccion().toUpperCase());
         } catch (Exception e) {
-            throw new IllegalArgumentException("Tipo de transacción inválido");
+            throw new IllegalArgumentException("Tipo de categoría inválido");
         }
 
         Periodicidad periodicidad;

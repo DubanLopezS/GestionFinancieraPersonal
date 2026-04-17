@@ -1,7 +1,10 @@
 package com.fabrica.gestionfinancierapersonal.interfaces.controllers;
 
 import com.fabrica.gestionfinancierapersonal.application.usecases.LoginUsuario;
+import com.fabrica.gestionfinancierapersonal.application.usecases.LogoutUsuario;
+
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,10 +23,13 @@ public class UsuarioController {
 
     private final LoginUsuario loginUsuario;
     private final RegistrarUsuario registrarUsuario;
+    private final LogoutUsuario logoutUsuario;
 
-    public UsuarioController(RegistrarUsuario registrarUsuario, LoginUsuario loginUsuario) {
+    public UsuarioController(RegistrarUsuario registrarUsuario, LoginUsuario loginUsuario,
+            LogoutUsuario logoutUsuario) {
         this.registrarUsuario = registrarUsuario;
         this.loginUsuario = loginUsuario;
+        this.logoutUsuario = logoutUsuario;
     }
 
     // Registrar usuario
@@ -44,5 +50,12 @@ public class UsuarioController {
         } catch (RuntimeException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
+    }
+
+    // Logout usuario
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        logoutUsuario.ejecutar();
+        return ResponseEntity.noContent().build();
     }
 }
