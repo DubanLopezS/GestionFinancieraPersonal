@@ -1,5 +1,6 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioResponse;
@@ -10,9 +11,11 @@ import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 public class RegistrarUsuario {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public RegistrarUsuario(UsuarioRepository usuarioRepository) {
+    public RegistrarUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public RegistrarUsuarioResponse ejecutar(RegistrarUsuarioRequest request) {
@@ -55,12 +58,15 @@ public class RegistrarUsuario {
             throw new IllegalArgumentException("El teléfono debe tener 10 dígitos numéricos");
         }
 
+        // HASH
+        String passwordHash = passwordEncoder.encode(request.contrasena());
+
         Usuario usuario = new Usuario(
                 request.username(),
                 request.nombre(),
                 request.apellido(),
                 request.correo(),
-                request.contrasena(),
+                passwordHash,
                 request.telefono());
 
         // Guardar

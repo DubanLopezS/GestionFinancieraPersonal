@@ -1,7 +1,6 @@
 package com.fabrica.gestionfinancierapersonal.persistance.repository;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.stereotype.Repository;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
@@ -24,5 +23,25 @@ public class CategoriaRepositoryImpl implements CategoriaRepository {
     @Override
     public Optional<Categoria> buscarPorNombre(String nombre, UUID idUsuario) {
         return jpaRepository.findByNombreAndUsuario_IdUsuario(nombre, idUsuario);
+    }
+
+    @Override
+    public Optional<Categoria> buscarPorId(UUID id) {
+        return jpaRepository.findById(id);
+    }
+
+    @Override
+    public List<Categoria> buscarPorUsuario(UUID idUsuario) {
+        return jpaRepository.findByUsuario_IdUsuario(idUsuario);
+    }
+
+    @Override
+    public void actualizar(Categoria categoria) {
+        jpaRepository.save(categoria);
+    }
+
+    @Override
+    public void eliminar(UUID id) {
+        jpaRepository.deleteById(id);
     }
 }

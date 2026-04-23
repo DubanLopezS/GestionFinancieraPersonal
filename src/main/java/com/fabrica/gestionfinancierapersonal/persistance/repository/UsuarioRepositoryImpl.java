@@ -1,7 +1,6 @@
 package com.fabrica.gestionfinancierapersonal.persistance.repository;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.springframework.stereotype.Repository;
 
@@ -35,5 +34,20 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     @Override
     public Optional<Usuario> buscarPorUsername(String username) {
         return jpaRepository.findByUsername(username);
+    }
+
+    @Override
+    public List<Usuario> buscarTodos() {
+        return jpaRepository.findAll();
+    }
+
+    @Override
+    public void actualizar(Usuario usuario) {
+        jpaRepository.save(usuario);
+    }
+
+    @Override
+    public void eliminar(UUID id) {
+        jpaRepository.deleteById(id);
     }
 }

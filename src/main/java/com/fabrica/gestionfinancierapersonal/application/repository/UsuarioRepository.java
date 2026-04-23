@@ -1,7 +1,6 @@
 package com.fabrica.gestionfinancierapersonal.application.repository;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
@@ -15,4 +14,9 @@ public interface UsuarioRepository {
 
     Optional<Usuario> buscarPorUsername(String username);
 
+    List<Usuario> buscarTodos();
+
+    void actualizar(Usuario usuario);
+
+    void eliminar(UUID id);
 }

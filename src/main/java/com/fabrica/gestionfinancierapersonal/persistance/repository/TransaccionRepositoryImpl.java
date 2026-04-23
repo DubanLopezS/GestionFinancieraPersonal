@@ -1,0 +1,43 @@
+package com.fabrica.gestionfinancierapersonal.persistance.repository;
+
+import java.util.*;
+
+import org.springframework.stereotype.Repository;
+
+import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
+import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
+
+@Repository
+public class TransaccionRepositoryImpl implements TransaccionRepository {
+
+    private final TransaccionJpaRepository jpaRepository;
+
+    public TransaccionRepositoryImpl(TransaccionJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
+    @Override
+    public void guardar(Transaccion transaccion) {
+        jpaRepository.save(transaccion);
+    }
+
+    @Override
+    public Optional<Transaccion> buscarPorId(UUID id) {
+        return jpaRepository.findById(id);
+    }
+
+    @Override
+    public List<Transaccion> buscarPorCuenta(UUID idCuenta) {
+        return jpaRepository.findByCuenta_IdCuenta(idCuenta);
+    }
+
+    @Override
+    public void actualizar(Transaccion transaccion) {
+        jpaRepository.save(transaccion);
+    }
+
+    @Override
+    public void eliminar(UUID id) {
+        jpaRepository.deleteById(id);
+    }
+}

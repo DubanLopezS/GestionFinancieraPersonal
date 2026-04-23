@@ -6,7 +6,5 @@ import java.util.UUID;
 public record CrearCategoriaRequest(
     UUID idUsuario,
     String nombre,
-    String tipo,
-    String icono,
-    String color) {
+    String tipo) {
 }

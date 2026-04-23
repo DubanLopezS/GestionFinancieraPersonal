@@ -7,15 +7,7 @@ import java.util.UUID;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;

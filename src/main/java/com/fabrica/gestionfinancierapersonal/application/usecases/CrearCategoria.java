@@ -34,14 +34,6 @@ public class CrearCategoria {
             throw new IllegalArgumentException("El tipo es obligatorio");
         }
 
-        if (request.icono() == null || request.icono().isBlank()) {
-            throw new IllegalArgumentException("El icono es obligatorio");
-        }
-
-        if (request.color() == null || request.color().isBlank()) {
-            throw new IllegalArgumentException("El color es obligatorio");
-        }
-
         if (request.idUsuario() == null) {
             throw new IllegalArgumentException("El usuario es obligatorio");
         }
@@ -70,8 +62,6 @@ public class CrearCategoria {
         Categoria categoria = new Categoria(
                 request.nombre(),
                 tipo,
-                request.icono(),
-                request.color(),
                 usuario
             );
 
@@ -79,8 +69,7 @@ public class CrearCategoria {
 
         return new CrearCategoriaResponse(
                 categoria.getNombre(),
-                categoria.getTipo().toString(),
-                categoria.getIcono(),
-                categoria.getColor());
+                categoria.getTipo().toString()
+            );
     }
 }
