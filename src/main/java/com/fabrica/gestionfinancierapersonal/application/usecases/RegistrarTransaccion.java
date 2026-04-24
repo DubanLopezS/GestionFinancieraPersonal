@@ -4,9 +4,11 @@ import org.springframework.stereotype.Service;
 
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionResponse;
+import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
@@ -15,9 +17,11 @@ import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 public class RegistrarTransaccion {
 
     private final UsuarioRepository usuarioRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public RegistrarTransaccion(UsuarioRepository usuarioRepository) {
+    public RegistrarTransaccion(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository) {
         this.usuarioRepository = usuarioRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     public RegistrarTransaccionResponse ejecutar(RegistrarTransaccionRequest request) {
@@ -43,6 +47,10 @@ public class RegistrarTransaccion {
             throw new IllegalArgumentException("La periodicidad es obligatoria");
         }
 
+        if (request.idCategoria() == null) {
+            throw new IllegalArgumentException("La categoría es obligatoria");
+        }
+
         // Convertir STRING → ENUM
         TipoTransaccion tipo;
         try {
@@ -62,15 +70,26 @@ public class RegistrarTransaccion {
         Usuario usuario = usuarioRepository.buscarPorId(request.idUsuario())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        // Buscar cuenta dentro del usuario
+        // Buscar cuenta
         Cuenta cuenta = usuario.buscarCuentaPorId(request.idCuenta());
+
+        Categoria categoria = categoriaRepository
+                .buscarPorIdYUsuario(request.idCategoria(), request.idUsuario())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+
+        TipoTransaccion tipoTransaccion = TipoTransaccion.valueOf(request.tipoTransaccion().toUpperCase());
+
+        if (!categoria.getTipo().equals(tipoTransaccion)) {
+            throw new IllegalArgumentException("La categoría no coincide con el tipo de transacción");
+        }
 
         // Crear transacción
         Transaccion transaccion = new Transaccion(
-            request.monto(), 
-            tipo, 
-            periodicidad, 
-            cuenta);
+                request.monto(),
+                tipo,
+                periodicidad,
+                cuenta,
+                categoria);
 
         // Agregar a la cuenta
         cuenta.agregarTransaccion(transaccion);

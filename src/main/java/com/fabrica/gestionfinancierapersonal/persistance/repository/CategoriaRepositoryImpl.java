@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.springframework.stereotype.Repository;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
+import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 
 @Repository
@@ -43,5 +44,15 @@ public class CategoriaRepositoryImpl implements CategoriaRepository {
     @Override
     public void eliminar(UUID id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Categoria> buscarPorUsuarioYTipo(UUID idUsuario, TipoTransaccion tipo) {
+        return jpaRepository.findByUsuario_IdUsuarioAndTipo(idUsuario, tipo);
+    }
+
+    @Override
+    public Optional<Categoria> buscarPorIdYUsuario(UUID idCategoria, UUID idUsuario) {
+        return jpaRepository.findByIdCategoriaAndUsuario_IdUsuario(idCategoria, idUsuario);
     }
 }

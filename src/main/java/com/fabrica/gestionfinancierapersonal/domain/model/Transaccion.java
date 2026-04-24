@@ -1,6 +1,8 @@
 package com.fabrica.gestionfinancierapersonal.domain.model;
 
 import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -12,6 +14,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "transacciones")
 @Getter
+@Setter
 public class Transaccion {
 
     @Id
@@ -31,10 +34,15 @@ public class Transaccion {
     @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     protected Transaccion() {
     }
 
-    public Transaccion(double monto, TipoTransaccion tipo, Periodicidad periodicidad, Cuenta cuenta) {
+    public Transaccion(double monto, TipoTransaccion tipo, Periodicidad periodicidad, Cuenta cuenta,
+            Categoria categoria) {
 
         if (monto <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0");
@@ -48,11 +56,20 @@ public class Transaccion {
             throw new IllegalArgumentException("La Periodicidad es obligatoria");
         }
 
+        if (categoria == null) {
+            throw new IllegalArgumentException("La categoría es obligatoria");
+        }
+
+        if (!categoria.getTipo().equals(tipo)) {
+            throw new IllegalArgumentException("La categoría no coincide con el tipo de transacción");
+        }
+
         this.idTransaccion = UUID.randomUUID();
         this.monto = monto;
         this.tipo = tipo;
         this.periodicidad = periodicidad;
         this.cuenta = cuenta;
+        this.categoria = categoria;
         this.fecha = LocalDateTime.now();
     }
 }

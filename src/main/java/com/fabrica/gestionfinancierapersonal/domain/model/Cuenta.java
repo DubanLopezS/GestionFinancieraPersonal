@@ -10,7 +10,6 @@ import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 import jakarta.persistence.*;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
-import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 
 import lombok.Getter;
 
@@ -21,7 +20,7 @@ public class Cuenta {
 
     @Id
     private UUID idCuenta;
-    
+
     private String nombre;
     private double saldo;
 
@@ -38,7 +37,6 @@ public class Cuenta {
     @OneToMany(mappedBy = "cuenta", cascade = CascadeType.ALL)
     private List<Transaccion> transacciones;
 
-    
     protected Cuenta() {
     }
 
@@ -73,10 +71,12 @@ public class Cuenta {
         if (monto < 0) {
             throw new IllegalArgumentException("Saldo inicial no puede ser negativo");
         }
-        if (monto == 0)
-            return;
-        Transaccion t = new Transaccion(monto, TipoTransaccion.INGRESO, Periodicidad.OCASIONAL, this);
-        agregarTransaccion(t);
+
+        if (this.saldo != 0) {
+            throw new IllegalStateException("El saldo inicial ya fue definido");
+        }
+
+        this.saldo = monto;
     }
 
     public void agregarTransaccion(Transaccion transaccion) {
