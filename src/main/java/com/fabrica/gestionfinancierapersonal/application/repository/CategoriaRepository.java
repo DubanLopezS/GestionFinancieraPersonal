@@ -23,5 +23,7 @@ public interface CategoriaRepository {
 
     Optional<Categoria> buscarPorIdYUsuario(UUID idCategoria, UUID idUsuario);
 
+    Optional<Categoria> buscarPorNombreYEsSistemaTrue(String nombre);
+
 }
 

@@ -13,8 +13,11 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransacc
 import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransaccionResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionResponse;
+import com.fabrica.gestionfinancierapersonal.application.dtos.TransferenciaRequest;
+import com.fabrica.gestionfinancierapersonal.application.dtos.TransferenciaResponse;
 import com.fabrica.gestionfinancierapersonal.application.usecases.ActualizarTransaccion;
 import com.fabrica.gestionfinancierapersonal.application.usecases.RegistrarTransaccion;
+import com.fabrica.gestionfinancierapersonal.application.usecases.TransferirDinero;
 
 @RestController
 @RequestMapping("/api/transaccion")
@@ -22,11 +25,13 @@ public class TransaccionController {
 
     private final RegistrarTransaccion registrarTransaccion;
     private final ActualizarTransaccion actualizarTransaccion;
+    private final TransferirDinero transferirDinero;
 
     public TransaccionController(RegistrarTransaccion registrarTransaccion,
-            ActualizarTransaccion actualizarTransaccion) {
+            ActualizarTransaccion actualizarTransaccion, TransferirDinero transferirDinero) {
         this.registrarTransaccion = registrarTransaccion;
         this.actualizarTransaccion = actualizarTransaccion;
+        this.transferirDinero = transferirDinero;
     }
 
     // Registrar transacción
@@ -51,4 +56,14 @@ public class TransaccionController {
         }
     }
 
+    @PostMapping("/transferencias")
+    public ResponseEntity<TransferenciaResponse> transferir(
+            @RequestBody TransferenciaRequest request) {
+
+        try {
+            return ResponseEntity.ok(transferirDinero.ejecutar(request));
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
 }

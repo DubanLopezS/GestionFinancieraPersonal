@@ -40,4 +40,9 @@ public class CuentaRepositoryImpl implements CuentaRepository {
     public void eliminar(UUID id) {
         jpaRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<Cuenta> buscarPorIdYUsuario(UUID idCuenta, UUID idUsuario) {
+        return jpaRepository.findByIdCuentaAndUsuario_IdUsuario(idCuenta, idUsuario);
+    }
 }

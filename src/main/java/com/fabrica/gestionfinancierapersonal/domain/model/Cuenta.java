@@ -12,10 +12,12 @@ import jakarta.persistence.*;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "cuentas")
 @Getter
+@Setter
 public class Cuenta {
 
     @Id

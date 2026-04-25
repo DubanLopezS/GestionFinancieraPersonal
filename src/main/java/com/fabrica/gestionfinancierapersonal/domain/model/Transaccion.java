@@ -38,11 +38,13 @@ public class Transaccion {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    private UUID transferenciaId;
+
     protected Transaccion() {
     }
 
     public Transaccion(double monto, TipoTransaccion tipo, Periodicidad periodicidad, Cuenta cuenta,
-            Categoria categoria) {
+            Categoria categoria, UUID transferenciaId) {
 
         if (monto <= 0) {
             throw new IllegalArgumentException("El monto debe ser mayor a 0");
@@ -71,5 +73,15 @@ public class Transaccion {
         this.cuenta = cuenta;
         this.categoria = categoria;
         this.fecha = LocalDateTime.now();
+        this.transferenciaId = transferenciaId;
+    }
+
+    public Transaccion(double monto,
+            TipoTransaccion tipo,
+            Periodicidad periodicidad,
+            Cuenta cuenta,
+            Categoria categoria) {
+
+        this(monto, tipo, periodicidad, cuenta, categoria, null);
     }
 }

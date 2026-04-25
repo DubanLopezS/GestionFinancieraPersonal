@@ -24,6 +24,8 @@ public class Categoria {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
+    @Column(name = "es_sistema")
+    private boolean esSistema;
 
     protected Categoria() {
     }

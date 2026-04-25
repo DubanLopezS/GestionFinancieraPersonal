@@ -15,4 +15,6 @@ public interface CuentaRepository {
     void actualizar(Cuenta cuenta);
 
     void eliminar(UUID id);
+
+    Optional<Cuenta> buscarPorIdYUsuario(UUID idCuenta, UUID idUsuario);
 }

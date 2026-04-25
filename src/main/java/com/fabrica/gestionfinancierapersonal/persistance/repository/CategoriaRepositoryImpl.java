@@ -55,4 +55,9 @@ public class CategoriaRepositoryImpl implements CategoriaRepository {
     public Optional<Categoria> buscarPorIdYUsuario(UUID idCategoria, UUID idUsuario) {
         return jpaRepository.findByIdCategoriaAndUsuario_IdUsuario(idCategoria, idUsuario);
     }
+
+    @Override
+    public Optional<Categoria> buscarPorNombreYEsSistemaTrue(String nombre) {
+        return jpaRepository.findByNombreAndEsSistemaTrue(nombre);
+    }
 }

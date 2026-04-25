@@ -19,4 +19,6 @@ public interface CategoriaJpaRepository extends JpaRepository<Categoria, UUID> {
 
     Optional<Categoria> findByIdCategoriaAndUsuario_IdUsuario(UUID idCategoria, UUID idUsuario);
 
+    Optional<Categoria> findByNombreAndEsSistemaTrue(String nombre);
+    
 }
