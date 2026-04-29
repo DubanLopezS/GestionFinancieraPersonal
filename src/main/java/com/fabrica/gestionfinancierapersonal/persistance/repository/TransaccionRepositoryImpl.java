@@ -28,7 +28,7 @@ public class TransaccionRepositoryImpl implements TransaccionRepository {
 
     @Override
     public List<Transaccion> buscarPorCuenta(UUID idCuenta) {
-        return jpaRepository.findByCuenta_IdCuenta(idCuenta);
+        return jpaRepository.findByCuentaConCategoria(idCuenta);
     }
 
     @Override
