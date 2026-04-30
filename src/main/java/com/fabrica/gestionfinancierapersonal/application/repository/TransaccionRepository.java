@@ -10,9 +10,11 @@ public interface TransaccionRepository {
 
     Optional<Transaccion> buscarPorId(UUID id);
 
-    List<Transaccion> buscarPorCuenta(UUID idCuenta);
+    List<Transaccion> buscarPorCuentaYUsuario(UUID idCuenta, UUID idUsuario);
 
     void actualizar(Transaccion transaccion);
 
     void eliminar(UUID id);
+
+    List<Transaccion> buscarPorCuentaCategoriaYUsuario(UUID cuentaId, UUID categoriaId, UUID usuarioId);
 }

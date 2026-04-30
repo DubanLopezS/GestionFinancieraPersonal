@@ -15,7 +15,20 @@ public interface TransaccionJpaRepository extends JpaRepository<Transaccion, UUI
     @Query("""
                 SELECT t FROM Transaccion t
                 JOIN FETCH t.categoria
-                WHERE t.cuenta.idCuenta = :idCuenta
+                WHERE t.cuenta.idCuenta = :cuentaId
+                AND t.cuenta.usuario.id = :usuarioId
             """)
-    List<Transaccion> findByCuentaConCategoria(UUID idCuenta);
+    List<Transaccion> findByCuentaYUsuario(UUID cuentaId, UUID usuarioId);
+
+    @Query("""
+                SELECT t FROM Transaccion t
+                JOIN FETCH t.categoria
+                WHERE t.cuenta.idCuenta = :cuentaId
+                AND t.categoria.id = :categoriaId
+                AND t.cuenta.usuario.id = :usuarioId
+            """)
+    List<Transaccion> findByCuentaCategoriaYUsuario(
+            UUID cuentaId,
+            UUID categoriaId,
+            UUID usuarioId);
 }

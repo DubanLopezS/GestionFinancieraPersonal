@@ -11,33 +11,47 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.fabrica.gestionfinancierapersonal.application.dtos.ResumenCategoriasResponse;
+import com.fabrica.gestionfinancierapersonal.application.repository.CuentaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 
 @Service
 public class ResumenGastosCategorias {
 
     private final TransaccionRepository transaccionRepository;
+    private final CuentaRepository cuentaRepository;
 
-    public ResumenGastosCategorias(TransaccionRepository transaccionRepository) {
+    public ResumenGastosCategorias(TransaccionRepository transaccionRepository, CuentaRepository cuentaRepository) {
         this.transaccionRepository = transaccionRepository;
+        this.cuentaRepository = cuentaRepository;
     }
 
-    public List<ResumenCategoriasResponse> ejecutar(UUID cuentaId) {
+    public List<ResumenCategoriasResponse> ejecutar(UUID cuentaId, UUID usuarioId) {
 
-        List<Transaccion> transacciones = transaccionRepository.buscarPorCuenta(cuentaId);
+        
+        if (cuentaId == null || usuarioId == null) {
+            throw new RuntimeException("Los parámetros son obligatorios");
+        }
+
+        Cuenta cuenta = cuentaRepository.buscarPorId(cuentaId)
+                .orElseThrow(() -> new RuntimeException("Cuenta no existe"));
+
+        if (!cuenta.getUsuario().getIdUsuario().equals(usuarioId)) {
+            throw new RuntimeException("La cuenta no pertenece al usuario");
+        }
+
+        List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaYUsuario(cuentaId, usuarioId);
 
         // Filtrar solo GASTOS
         List<Transaccion> gastos = transacciones.stream()
                 .filter(t -> t.getTipo() == TipoTransaccion.GASTO)
                 .toList();
 
-
         if (gastos.isEmpty()) {
             return List.of();
         }
-
 
         Map<String, BigDecimal> totalesPorCategoria = new HashMap<>();
 
@@ -54,7 +68,6 @@ public class ResumenGastosCategorias {
         BigDecimal totalGeneral = totalesPorCategoria.values().stream()
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            
         List<ResumenCategoriasResponse> resultado = new ArrayList<>();
 
         for (Map.Entry<String, BigDecimal> entry : totalesPorCategoria.entrySet()) {
@@ -66,7 +79,6 @@ public class ResumenGastosCategorias {
                     .multiply(BigDecimal.valueOf(100))
                     .doubleValue();
 
-
             porcentaje = Math.round(porcentaje * 100.0) / 100.0;
 
             resultado.add(new ResumenCategoriasResponse(
@@ -74,7 +86,6 @@ public class ResumenGastosCategorias {
                     totalCategoria.doubleValue(),
                     porcentaje));
         }
-
 
         resultado.sort((a, b) -> Double.compare(b.total(), a.total()));
 

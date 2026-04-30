@@ -27,8 +27,8 @@ public class TransaccionRepositoryImpl implements TransaccionRepository {
     }
 
     @Override
-    public List<Transaccion> buscarPorCuenta(UUID idCuenta) {
-        return jpaRepository.findByCuentaConCategoria(idCuenta);
+    public List<Transaccion> buscarPorCuentaYUsuario(UUID cuentaId, UUID usuarioId) {
+        return jpaRepository.findByCuentaYUsuario(cuentaId, usuarioId);
     }
 
     @Override
@@ -39,5 +39,14 @@ public class TransaccionRepositoryImpl implements TransaccionRepository {
     @Override
     public void eliminar(UUID id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Transaccion> buscarPorCuentaCategoriaYUsuario(
+            UUID cuentaId,
+            UUID categoriaId,
+            UUID usuarioId) {
+        return jpaRepository.findByCuentaCategoriaYUsuario(
+                cuentaId, categoriaId, usuarioId);
     }
 }
