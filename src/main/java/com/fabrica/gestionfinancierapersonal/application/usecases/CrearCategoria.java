@@ -7,6 +7,7 @@ import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepos
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ConvertidorEnums;
 
 import java.util.Optional;
 
@@ -17,10 +18,12 @@ public class CrearCategoria {
 
     private final CategoriaRepository categoriaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ConvertidorEnums convertidorEnums;
 
-    public CrearCategoria(CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository) {
+    public CrearCategoria(CategoriaRepository categoriaRepository, UsuarioRepository usuarioRepository, ConvertidorEnums convertidorEnums) {
         this.categoriaRepository = categoriaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.convertidorEnums = convertidorEnums;
     }
 
     public CrearCategoriaResponse ejecutar(CrearCategoriaRequest request) {
@@ -40,12 +43,7 @@ public class CrearCategoria {
 
 
         // Convertir STRING → ENUM
-        TipoTransaccion tipo;
-        try {
-            tipo = TipoTransaccion.valueOf(request.tipo().toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Tipo de transacción inválida");
-        }
+        TipoTransaccion tipo = convertidorEnums.convertirATipoTransaccion(request.tipo());
 
 
         Optional<Categoria> existente = categoriaRepository.buscarPorNombre(request.nombre().trim(), request.idUsuario());

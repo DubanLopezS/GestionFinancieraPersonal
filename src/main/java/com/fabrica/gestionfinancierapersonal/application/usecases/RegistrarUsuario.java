@@ -6,61 +6,50 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioRe
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorCorreo;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorContrasena;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorNombre;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorTelefono;
+
 
 @Service
 public class RegistrarUsuario {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ValidadorCorreo validadorCorreo;
+    private final ValidadorContrasena validadorContrasena;
+    private final ValidadorNombre validadorNombre;
+    private final ValidadorTelefono validadorTelefono;
 
-    public RegistrarUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+
+    public RegistrarUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, ValidadorCorreo validadorCorreo,
+        ValidadorContrasena validadorContrasena, ValidadorNombre validadorNombre, ValidadorTelefono validadorTelefono) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.validadorCorreo = validadorCorreo;
+        this.validadorContrasena = validadorContrasena;
+        this.validadorNombre = validadorNombre;
+        this.validadorTelefono = validadorTelefono;
     }
 
     public RegistrarUsuarioResponse ejecutar(RegistrarUsuarioRequest request) {
 
-        // Validar campos obligatorios
-        if (esCampoVacio(request.nombre()) ||
-                esCampoVacio(request.correo()) ||
-                esCampoVacio(request.contrasena()) ||
-                esCampoVacio(request.telefono())) {
-
-            throw new IllegalArgumentException("Todos los campos son obligatorios");
-        }
-
         if (usuarioRepository.buscarPorUsername(request.username()).isPresent()) {
             throw new IllegalArgumentException("El username ya existe");
-        }
-
-        if (!request.nombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ' -]{3,15}$")) {
-            throw new IllegalArgumentException("Nombre inválido");
-        }
-
-        if (!request.apellido().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ' -]{3,15}$")) {
-            throw new IllegalArgumentException("Apellido inválido");
-        }
-
-        if (!esCorreoValido(request.correo())) {
-            throw new IllegalArgumentException("Formato de correo inválido");
         }
 
         if (usuarioRepository.buscarPorCorreo(request.correo()).isPresent()) {
             throw new IllegalArgumentException("El correo ya está registrado");
         }
 
-        if (!esContrasenaValida(request.contrasena())) {
-            throw new IllegalArgumentException(
-                    "La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial");
-        }
-
-        if (request.telefono() == null || !request.telefono().matches("\\d{10}")) {
-            throw new IllegalArgumentException("El teléfono debe tener 10 dígitos numéricos");
-        }
+         // Validar campos basicos
+        validarCamposObligatorios(request);
 
         // HASH
         String passwordHash = passwordEncoder.encode(request.contrasena());
 
+        // Crear usuario
         Usuario usuario = new Usuario(
                 request.username(),
                 request.nombre(),
@@ -83,24 +72,11 @@ public class RegistrarUsuario {
 
     // Validaciones
 
-    private boolean esCampoVacio(String campo) {
-        return campo == null || campo.isBlank();
-    }
-
-    private boolean esCorreoValido(String correo) {
-        return correo != null && correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    }
-
-    private boolean esContrasenaValida(String contrasena) {
-        if (contrasena == null || contrasena.length() < 8) {
-            return false;
-        }
-
-        boolean tieneMayuscula = contrasena.matches(".*[A-Z].*");
-        boolean tieneMinuscula = contrasena.matches(".*[a-z].*");
-        boolean tieneNumero = contrasena.matches(".*\\d.*");
-        boolean tieneEspecial = contrasena.matches(".*[@$!%*?&].*");
-
-        return tieneMayuscula && tieneMinuscula && tieneNumero && tieneEspecial;
+    private void validarCamposObligatorios(RegistrarUsuarioRequest request) {
+        validadorNombre.validar(request.nombre());
+        validadorNombre.validar(request.apellido());
+        validadorCorreo.validar(request.correo());
+        validadorContrasena.validar(request.contrasena());
+        validadorTelefono.validar(request.telefono());
     }
 }

@@ -12,16 +12,19 @@ import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ConvertidorEnums;
 
 @Service
 public class RegistrarTransaccion {
 
     private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ConvertidorEnums convertidorEnums;
 
-    public RegistrarTransaccion(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository) {
+    public RegistrarTransaccion(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository, ConvertidorEnums convertidorEnums) {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
+        this.convertidorEnums = convertidorEnums;
     }
 
     public RegistrarTransaccionResponse ejecutar(RegistrarTransaccionRequest request) {
@@ -52,19 +55,10 @@ public class RegistrarTransaccion {
         }
 
         // Convertir STRING → ENUM
-        TipoTransaccion tipo;
-        try {
-            tipo = TipoTransaccion.valueOf(request.tipoTransaccion().toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Tipo de categoría inválido");
-        }
+        TipoTransaccion tipo = convertidorEnums.convertirATipoTransaccion(request.tipoTransaccion());
 
-        Periodicidad periodicidad;
-        try {
-            periodicidad = Periodicidad.valueOf(request.periodicidad().toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Periodicidad inválida");
-        }
+        Periodicidad periodicidad = convertidorEnums.convertirAPeriodicidad(request.periodicidad());
+        
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.buscarPorId(request.idUsuario())

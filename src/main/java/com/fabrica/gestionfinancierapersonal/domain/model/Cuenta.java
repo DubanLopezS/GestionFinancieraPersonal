@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
-import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.strategy.OperacionSaldo;
+import com.fabrica.gestionfinancierapersonal.domain.strategy.SaldoFactory;
 
 import jakarta.persistence.*;
 
@@ -83,26 +84,31 @@ public class Cuenta {
 
     public void agregarTransaccion(Transaccion transaccion) {
 
-        if (transaccion == null) {
-            throw new IllegalArgumentException("Transacción inválida");
-        }
-        if (transaccion.getMonto() <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0");
-        }
-        if (transaccion.getTipo() == TipoTransaccion.GASTO &&
-                this.saldo < transaccion.getMonto()) {
-            throw new IllegalArgumentException("El Saldo es insuficiente");
-        }
-        actualizarSaldo(transaccion);
+        validarTransaccion(transaccion);
+
+        OperacionSaldo operacion = SaldoFactory.crear(transaccion.getTipo());
+
+        operacion.aplicar(this, transaccion.getMonto());
+
         this.transacciones.add(transaccion);
     }
 
-    private void actualizarSaldo(Transaccion t) {
+    public void sumarSaldo(double monto) {
+        this.saldo += monto;
+    }
 
-        if (t.getTipo() == TipoTransaccion.INGRESO) {
-            this.saldo += t.getMonto();
-        } else {
-            this.saldo -= t.getMonto();
+    public void restarSaldo(double monto) {
+        this.saldo -= monto;
+    }
+
+    private void validarTransaccion(Transaccion transaccion) {
+
+        if (transaccion == null) {
+            throw new IllegalArgumentException("Transacción inválida");
+        }
+
+        if (transaccion.getMonto() <= 0) {
+            throw new IllegalArgumentException("El monto debe ser mayor a 0");
         }
     }
 }

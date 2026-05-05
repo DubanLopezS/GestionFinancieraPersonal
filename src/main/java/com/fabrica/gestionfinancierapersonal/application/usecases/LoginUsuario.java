@@ -6,35 +6,31 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioReques
 import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorContrasena;
+import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorCorreo;
 
 @Service
 public class LoginUsuario {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ValidadorCorreo validadorCorreo;
+    private final ValidadorContrasena validadarContrasena;
 
-    private boolean esCorreoValido(String correo) {
-        return correo != null &&
-                correo.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    }
-
-    public LoginUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    
+    public LoginUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, ValidadorCorreo validadorCorreo, ValidadorContrasena validadarContrasena) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.validadorCorreo = validadorCorreo;
+        this.validadarContrasena = validadarContrasena;
     }
 
     public LoginUsuarioResponse ejecutar(LoginUsuarioRequest request) {
 
-        // Campos obligatorios
-        if (request.correo() == null || request.correo().isBlank()
-                || request.contrasena() == null || request.contrasena().isBlank()) {
-            throw new IllegalArgumentException("Debe completar los campos requeridos");
-        }
+        // Validar campos básicos
+        validadorCorreo.validar(request.correo());
+        validadarContrasena.validar(request.contrasena());
 
-        // Formato del correo
-        if (!esCorreoValido(request.correo())) {
-            throw new IllegalArgumentException("El formato del correo no es válido");
-        }
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.buscarPorCorreo(request.correo())
@@ -48,7 +44,6 @@ public class LoginUsuario {
         if (!coincide) {
             throw new RuntimeException("Credenciales inválidas");
         }
-
 
         return new LoginUsuarioResponse(
                 usuario.getIdUsuario(),
