@@ -2,6 +2,9 @@ package com.fabrica.gestionfinancierapersonal.application.repository;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
 public interface UsuarioRepository {
@@ -19,4 +22,7 @@ public interface UsuarioRepository {
     void actualizar(Usuario usuario);
 
     void eliminar(UUID id);
+
+    Page<Usuario> buscarUsuarios(UUID idAdmin, String filtro, Pageable pageable);
+    
 }

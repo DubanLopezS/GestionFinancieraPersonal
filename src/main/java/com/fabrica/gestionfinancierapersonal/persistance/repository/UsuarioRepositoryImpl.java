@@ -2,9 +2,12 @@ package com.fabrica.gestionfinancierapersonal.persistance.repository;
 
 import java.util.*;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.enums.Rol;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
 @Repository
@@ -49,5 +52,23 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     @Override
     public void eliminar(UUID id) {
         jpaRepository.deleteById(id);
+    }
+
+    @Override
+    public Page<Usuario> buscarUsuarios(
+            UUID idAdmin,
+            String filtro,
+            Pageable pageable) {
+        if (filtro == null || filtro.isBlank()) {
+            return jpaRepository.buscarUsuariosSinFiltro(
+                    idAdmin,
+                    Rol.ADMIN,
+                    pageable);
+        }
+        return jpaRepository.buscarUsuariosConFiltro(
+                idAdmin,
+                Rol.ADMIN,
+                filtro,
+                pageable);
     }
 }
