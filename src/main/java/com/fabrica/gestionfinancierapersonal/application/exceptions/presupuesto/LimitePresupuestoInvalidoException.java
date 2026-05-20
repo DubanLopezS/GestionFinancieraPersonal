@@ -1,0 +1,8 @@
+package com.fabrica.gestionfinancierapersonal.application.exceptions.presupuesto;
+
+public class LimitePresupuestoInvalidoException extends RuntimeException {
+
+    public LimitePresupuestoInvalidoException(String mensaje) {
+        super(mensaje);
+    }
+}

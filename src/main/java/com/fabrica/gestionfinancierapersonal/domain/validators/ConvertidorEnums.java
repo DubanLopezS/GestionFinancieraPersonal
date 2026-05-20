@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
+import com.fabrica.gestionfinancierapersonal.domain.enums.PeriodoPresupuesto;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 
@@ -68,6 +69,19 @@ public class ConvertidorEnums {
         }
     }
 
+    // Convierte un String a PeriodoPresupuesto
+    public PeriodoPresupuesto convertirAPeriodoPresupuesto(String periodo) {
+        if (periodo == null || periodo.isBlank()) {
+            throw new IllegalArgumentException("El período del presupuesto no puede estar vacío");
+        }
+        try {
+            return PeriodoPresupuesto.valueOf(periodo.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                    "Período de presupuesto inválido. Valores válidos: " + obtenerValoresPeriodoPresupuesto());
+        }
+    }
+
 
     private String obtenerValoresTipoCuenta() {
         return String.join(", ", 
@@ -93,6 +107,13 @@ public class ConvertidorEnums {
     private String obtenerValoresPeriodicidad() {
         return String.join(", ",
             org.apache.commons.lang3.EnumUtils.getEnumList(Periodicidad.class).stream()
+                .map(Enum::name)
+                .toArray(String[]::new));
+    }
+
+    private String obtenerValoresPeriodoPresupuesto() {
+        return String.join(", ",
+            org.apache.commons.lang3.EnumUtils.getEnumList(PeriodoPresupuesto.class).stream()
                 .map(Enum::name)
                 .toArray(String[]::new));
     }

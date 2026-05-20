@@ -40,13 +40,11 @@ public class AdminController {
                     filtro,
                     pageable));
         } catch (UsuarioNoEncontradoException e) {
-
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND,
                     e.getMessage());
 
         } catch (AccesoDenegadoException e) {
-
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     e.getMessage());

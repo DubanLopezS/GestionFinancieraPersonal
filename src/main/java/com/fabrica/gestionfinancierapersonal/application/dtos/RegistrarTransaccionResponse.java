@@ -4,5 +4,6 @@ import java.util.UUID;
 
 public record RegistrarTransaccionResponse(
     UUID cuentaId,
-    double saldoActual) {
+    double saldoActual,
+    String alerta) {
     }

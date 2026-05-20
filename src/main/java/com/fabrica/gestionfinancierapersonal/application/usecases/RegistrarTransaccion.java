@@ -1,15 +1,20 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
+import com.fabrica.gestionfinancierapersonal.application.repository.PresupuestoRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
+import com.fabrica.gestionfinancierapersonal.domain.model.Presupuesto;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ConvertidorEnums;
@@ -20,11 +25,14 @@ public class RegistrarTransaccion {
     private final UsuarioRepository usuarioRepository;
     private final CategoriaRepository categoriaRepository;
     private final ConvertidorEnums convertidorEnums;
+    private final PresupuestoRepository presupuestoRepository;
 
-    public RegistrarTransaccion(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository, ConvertidorEnums convertidorEnums) {
+    public RegistrarTransaccion(UsuarioRepository usuarioRepository, CategoriaRepository categoriaRepository,
+            ConvertidorEnums convertidorEnums, PresupuestoRepository presupuestoRepository) {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
         this.convertidorEnums = convertidorEnums;
+        this.presupuestoRepository = presupuestoRepository;
     }
 
     public RegistrarTransaccionResponse ejecutar(RegistrarTransaccionRequest request) {
@@ -58,7 +66,6 @@ public class RegistrarTransaccion {
         TipoTransaccion tipo = convertidorEnums.convertirATipoTransaccion(request.tipoTransaccion());
 
         Periodicidad periodicidad = convertidorEnums.convertirAPeriodicidad(request.periodicidad());
-        
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.buscarPorId(request.idUsuario())
@@ -85,7 +92,36 @@ public class RegistrarTransaccion {
                 cuenta,
                 categoria);
 
-        // Agregar a la cuenta
+        // Validar presupuesto solo para gastos
+        String alerta = null;
+        if (tipo == TipoTransaccion.GASTO
+                && !categoria.isEsSistema()) {
+            Optional<Presupuesto> presupuestoOptional = presupuestoRepository
+                    .buscarActivoPorUsuarioYCategoria(
+                            usuario.getIdUsuario(),
+                            categoria.getIdCategoria());
+            if (presupuestoOptional.isPresent()) {
+                Presupuesto presupuesto = presupuestoOptional.get();
+                // Validar expiración
+                if (LocalDateTime.now()
+                        .isAfter(
+                                presupuesto.getFechaExpiracion())) {
+                    presupuesto.setActivo(false);
+                } else {
+                    // Acumular gasto
+                    presupuesto.agregarGasto(
+                            request.monto());
+                    // Validar exceso
+                    if (presupuesto.getMontoGastado() > presupuesto.getLimite()) {
+                        alerta = "Has excedido el límite del presupuesto";
+                    }
+                    presupuestoRepository
+                            .guardar(presupuesto);
+                }
+            }
+        }
+
+        // Agregar transacción a la cuenta
         cuenta.agregarTransaccion(transaccion);
 
         // Guardar
@@ -93,6 +129,7 @@ public class RegistrarTransaccion {
 
         return new RegistrarTransaccionResponse(
                 cuenta.getIdCuenta(),
-                cuenta.getSaldo());
+                cuenta.getSaldo(),
+                alerta);
     }
 }
