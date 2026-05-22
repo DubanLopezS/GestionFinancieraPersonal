@@ -79,4 +79,43 @@ public class Presupuesto {
     public double getPorcentajeUsado() {
         return (montoGastado / limite) * 100;
     }
+
+    public boolean estaCercaDelLimite() {
+        return getPorcentajeUsado() >= 80
+                && getPorcentajeUsado() < 100;
+    }
+
+    public boolean estaExcedido() {
+        return getPorcentajeUsado() >= 100;
+    }
+
+    public double getMontoExcedido() {
+        if (!estaExcedido()) {
+            return 0;
+        }
+        return montoGastado - limite;
+    }
+
+    public boolean estaExpirado() {
+        return LocalDateTime.now()
+                .isAfter(fechaExpiracion);
+    }
+
+    public void reiniciarPeriodo() {
+        this.montoGastado = 0;
+        this.fechaCreacion = LocalDateTime.now();
+        this.fechaExpiracion = periodo.calcularExpiracion(
+                this.fechaCreacion);
+    }
+
+    public void actualizarLimite(double nuevoLimite) {
+        this.limite = nuevoLimite;
+    }
+
+    public void actualizarPeriodo(PeriodoPresupuesto nuevoPeriodo) {
+        this.periodo = nuevoPeriodo;
+        this.fechaCreacion = LocalDateTime.now();
+        this.fechaExpiracion = nuevoPeriodo.calcularExpiracion(
+                this.fechaCreacion);
+    }
 }

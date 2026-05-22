@@ -28,21 +28,21 @@ public class ResumenGastosCategorias {
         this.cuentaRepository = cuentaRepository;
     }
 
-    public List<ResumenCategoriasResponse> ejecutar(UUID cuentaId, UUID usuarioId) {
+    public List<ResumenCategoriasResponse> ejecutar(UUID idCuenta, UUID idUsuario) {
 
         
-        if (cuentaId == null || usuarioId == null) {
+        if (idCuenta == null || idUsuario == null) {
             throw new RuntimeException("Los parámetros son obligatorios");
         }
 
-        Cuenta cuenta = cuentaRepository.buscarPorId(cuentaId)
+        Cuenta cuenta = cuentaRepository.buscarPorId(idCuenta)
                 .orElseThrow(() -> new RuntimeException("Cuenta no existe"));
 
-        if (!cuenta.getUsuario().getIdUsuario().equals(usuarioId)) {
+        if (!cuenta.getUsuario().getIdUsuario().equals(idUsuario)) {
             throw new RuntimeException("La cuenta no pertenece al usuario");
         }
 
-        List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaYUsuario(cuentaId, usuarioId);
+        List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaYUsuario(idCuenta, idUsuario);
 
         // Filtrar solo GASTOS
         List<Transaccion> gastos = transacciones.stream()

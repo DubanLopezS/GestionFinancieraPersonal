@@ -5,6 +5,7 @@ import java.util.*;
 import org.springframework.stereotype.Repository;
 
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
+import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 
 @Repository
@@ -48,5 +49,30 @@ public class TransaccionRepositoryImpl implements TransaccionRepository {
             UUID usuarioId) {
         return jpaRepository.findByCuentaCategoriaYUsuario(
                 cuentaId, categoriaId, usuarioId);
+    }
+
+    @Override
+    public double sumarIngresosDelMes(UUID usuarioId) {
+        return jpaRepository.sumarIngresosDelMes(usuarioId);
+    }
+
+    @Override
+    public double sumarGastosDelMes(UUID usuarioId) {
+        return jpaRepository.sumarGastosDelMes(usuarioId);
+    }
+
+    @Override
+    public List<Categoria> obtenerCategoriaMayorGasto(UUID usuarioId) {
+        return jpaRepository.obtenerCategoriaMayorGasto(usuarioId);
+    }
+
+    @Override
+    public double sumarGastosPorCategoriaDelMes(UUID usuarioId, UUID categoriaId) {
+        return jpaRepository.sumarGastosPorCategoriaDelMes(usuarioId, categoriaId);
+    }
+
+    @Override
+    public List<Transaccion> obtenerGastosPorCategoria(UUID usuarioId, UUID categoriaId) {
+        return jpaRepository.obtenerGastosPorCategoria(usuarioId, categoriaId);
     }
 }

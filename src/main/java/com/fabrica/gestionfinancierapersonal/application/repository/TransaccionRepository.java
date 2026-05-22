@@ -1,7 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.application.repository;
 
 import java.util.*;
-
+import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 
 public interface TransaccionRepository {
@@ -17,4 +17,14 @@ public interface TransaccionRepository {
     void eliminar(UUID id);
 
     List<Transaccion> buscarPorCuentaCategoriaYUsuario(UUID cuentaId, UUID categoriaId, UUID usuarioId);
+
+    double sumarIngresosDelMes(UUID usuarioId);
+
+    double sumarGastosDelMes(UUID usuarioId);
+
+    List<Categoria> obtenerCategoriaMayorGasto(UUID usuarioId);
+
+    double sumarGastosPorCategoriaDelMes(UUID usuarioId, UUID categoriaId);
+
+    List<Transaccion> obtenerGastosPorCategoria(UUID usuarioId, UUID categoriaId);
 }

@@ -1,6 +1,5 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -33,6 +32,7 @@ public class RegistrarTransaccion {
         this.categoriaRepository = categoriaRepository;
         this.convertidorEnums = convertidorEnums;
         this.presupuestoRepository = presupuestoRepository;
+
     }
 
     public RegistrarTransaccionResponse ejecutar(RegistrarTransaccionRequest request) {
@@ -92,6 +92,7 @@ public class RegistrarTransaccion {
                 cuenta,
                 categoria);
 
+                
         // Validar presupuesto solo para gastos
         String alerta = null;
         if (tipo == TipoTransaccion.GASTO
@@ -102,22 +103,24 @@ public class RegistrarTransaccion {
                             categoria.getIdCategoria());
             if (presupuestoOptional.isPresent()) {
                 Presupuesto presupuesto = presupuestoOptional.get();
-                // Validar expiración
-                if (LocalDateTime.now()
-                        .isAfter(
-                                presupuesto.getFechaExpiracion())) {
-                    presupuesto.setActivo(false);
-                } else {
-                    // Acumular gasto
-                    presupuesto.agregarGasto(
-                            request.monto());
-                    // Validar exceso
-                    if (presupuesto.getMontoGastado() > presupuesto.getLimite()) {
-                        alerta = "Has excedido el límite del presupuesto";
-                    }
-                    presupuestoRepository
-                            .guardar(presupuesto);
+
+                // Reiniciar periodo si expiró
+                if (presupuesto.estaExpirado()) {
+                    presupuesto.reiniciarPeriodo();
                 }
+                // Acumular gasto
+                presupuesto.agregarGasto(request.monto());
+                // Evaluar alertas
+                if (presupuesto.estaExcedido()) {
+                    alerta = String.format("Has excedido el límite del presupuesto en %.2f",
+                            presupuesto.getMontoExcedido());
+                } else if (presupuesto.estaCercaDelLimite()) {
+                    alerta = String.format("Ya has usado el %.2f%% del presupuesto",
+                            presupuesto.getPorcentajeUsado());
+                } else {
+                    alerta = "Estas dentro del presupuesto";
+                }
+                presupuestoRepository.guardar(presupuesto);
             }
         }
 

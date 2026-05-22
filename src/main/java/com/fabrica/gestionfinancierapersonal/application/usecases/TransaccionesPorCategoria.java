@@ -27,31 +27,31 @@ public class TransaccionesPorCategoria {
         this.cuentaRepository = cuentaRepository;
     }
 
-    public List<MovimientosCategoriaResponse> ejecutar(UUID cuentaId, UUID categoriaId, UUID usuarioId) {
+    public List<MovimientosCategoriaResponse> ejecutar(UUID idCuenta, UUID idCategoria, UUID idUsuario) {
 
 
-        if (cuentaId == null || categoriaId == null || usuarioId == null) {
+        if (idCuenta == null || idCategoria == null || idUsuario == null) {
             throw new RuntimeException("Los parámetros son obligatorios");
         }
 
-        Cuenta cuenta = cuentaRepository.buscarPorId(cuentaId)
+        Cuenta cuenta = cuentaRepository.buscarPorId(idCuenta)
                 .orElseThrow(() -> new RuntimeException("La cuenta no existe"));
 
-        if (!cuenta.getUsuario().getIdUsuario().equals(usuarioId)) {
+        if (!cuenta.getUsuario().getIdUsuario().equals(idUsuario)) {
             throw new RuntimeException("La cuenta no le pertenece al usuario");
         }
 
-        Categoria categoria = categoriaRepository.buscarPorId(categoriaId)
+        Categoria categoria = categoriaRepository.buscarPorId(idCategoria)
                 .orElseThrow(() -> new RuntimeException("Categoría no existe"));
 
         if (categoria.getUsuario() != null &&
-                !categoria.getUsuario().getIdUsuario().equals(usuarioId)) {
+                !categoria.getUsuario().getIdUsuario().equals(idUsuario)) {
 
             throw new RuntimeException("La categoría no pertenece al usuario");
         }
 
-        List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaCategoriaYUsuario(cuentaId, categoriaId,
-                usuarioId);
+        List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaCategoriaYUsuario(idCuenta, idCategoria,
+                idUsuario);
 
         return transacciones.stream()
                 .map(t -> new MovimientosCategoriaResponse(
