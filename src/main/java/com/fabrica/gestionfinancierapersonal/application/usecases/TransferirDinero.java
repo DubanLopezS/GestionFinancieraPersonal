@@ -4,11 +4,13 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.fabrica.gestionfinancierapersonal.application.dtos.ConversionMonedaResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.TransferenciaRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.TransferenciaResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.CuentaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
+import com.fabrica.gestionfinancierapersonal.application.services.ConversorMonedaService;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
@@ -23,12 +25,14 @@ public class TransferirDinero {
         private final CategoriaRepository categoriaRepository;
         private final CuentaRepository cuentaRepository;
         private final TransaccionRepository transaccionRepository;
+        private final ConversorMonedaService conversorMonedaService;
 
         public TransferirDinero(CategoriaRepository categoriaRepository, CuentaRepository cuentaRepository,
-                        TransaccionRepository transaccionRepository) {
+                        TransaccionRepository transaccionRepository, ConversorMonedaService conversorMonedaService) {
                 this.categoriaRepository = categoriaRepository;
                 this.cuentaRepository = cuentaRepository;
                 this.transaccionRepository = transaccionRepository;
+                this.conversorMonedaService = conversorMonedaService;
         }
 
         @Transactional
@@ -46,18 +50,16 @@ public class TransferirDinero {
                         throw new RuntimeException("Las cuentas deben ser diferentes");
                 }
 
-                if (request.montoOrigen() <= 0) {
-                        throw new RuntimeException("El monto origen debe ser mayor a cero");
-                }
-
-                if (request.montoDestino() <= 0) {
-                        throw new RuntimeException("El monto destino debe ser mayor a cero");
-                }
-
-                if (origen.getSaldo() < request.montoOrigen()) {
+                if (origen.getSaldo() < request.monto()) {
                         throw new RuntimeException("Saldo insuficiente");
                 }
 
+                ConversionMonedaResponse conversion = conversorMonedaService.convertir(
+                                request.monto(),
+                                origen.getMoneda(),
+                                destino.getMoneda());
+
+                double montoDestino = conversion.montoConvertido();
                 Categoria salida = categoriaRepository
                                 .buscarPorNombreYEsSistemaTrue("Transferencia_Salida")
                                 .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
@@ -70,7 +72,7 @@ public class TransferirDinero {
 
                 // Transacción salida
                 Transaccion t1 = new Transaccion(
-                                request.montoOrigen(),
+                                request.monto(),
                                 TipoTransaccion.GASTO,
                                 Periodicidad.OCASIONAL,
                                 origen,
@@ -79,7 +81,7 @@ public class TransferirDinero {
 
                 // Transacción entrada
                 Transaccion t2 = new Transaccion(
-                                request.montoDestino(),
+                                montoDestino,
                                 TipoTransaccion.INGRESO,
                                 Periodicidad.OCASIONAL,
                                 destino,
@@ -87,8 +89,8 @@ public class TransferirDinero {
                                 transferenciaId);
 
                 // Actualizar saldos
-                origen.setSaldo(origen.getSaldo() - request.montoOrigen());
-                destino.setSaldo(destino.getSaldo() + request.montoDestino());
+                origen.setSaldo(origen.getSaldo() - request.monto());
+                destino.setSaldo(destino.getSaldo() + montoDestino);
 
                 cuentaRepository.actualizar(origen);
                 cuentaRepository.actualizar(destino);
@@ -99,6 +101,7 @@ public class TransferirDinero {
                 return new TransferenciaResponse(
                                 transferenciaId,
                                 origen.getIdCuenta(),
-                                destino.getIdCuenta());
+                                destino.getIdCuenta(),
+                                conversion.trm());
         }
 }

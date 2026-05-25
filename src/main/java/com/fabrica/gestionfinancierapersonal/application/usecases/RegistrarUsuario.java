@@ -71,7 +71,6 @@ public class RegistrarUsuario {
     }
 
     // Validaciones
-
     private void validarCamposObligatorios(RegistrarUsuarioRequest request) {
         validadorNombre.validar(request.nombre());
         validadorNombre.validar(request.apellido());
