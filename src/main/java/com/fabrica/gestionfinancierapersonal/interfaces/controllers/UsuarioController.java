@@ -8,8 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioResponse;
@@ -43,22 +43,16 @@ public class UsuarioController {
 
     // Registrar usuario
     @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
     public RegistrarUsuarioResponse registrar(@RequestBody RegistrarUsuarioRequest request) {
-        try {
-            return registrarUsuario.ejecutar(request);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return registrarUsuario.ejecutar(request);
     }
 
     // Login usuario
     @PostMapping("/login")
-    public LoginUsuarioResponse login(@RequestBody LoginUsuarioRequest request) {
-        try {
-            return loginUsuario.ejecutar(request);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public ResponseEntity<LoginUsuarioResponse> login(@RequestBody LoginUsuarioRequest request) {
+        return ResponseEntity.ok(
+                loginUsuario.ejecutar(request));
     }
 
     // Logout usuario
@@ -69,29 +63,16 @@ public class UsuarioController {
     }
 
     // Solicitud de recuperación de contraseña
-    @PostMapping("/recuperar-password")
-    public ResponseEntity<String> recuperarPassword(
-            @RequestBody SolicitarRecuperacionRequest request) {
-        try {
-            solicitarRecuperacionPassword.ejecutar(request);
-            return ResponseEntity.ok("Código de recuperación enviado, revise su bandeja de entrada");
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    @PostMapping("/recuperarPassword")
+    public ResponseEntity<String> recuperarPassword(@RequestBody SolicitarRecuperacionRequest request) {
+        solicitarRecuperacionPassword.ejecutar(request);
+        return ResponseEntity.ok("Código de recuperación enviado, revise su bandeja de entrada");
     }
 
     // Restablecer contraseña
-    @PostMapping("/restablecer-password")
-    public ResponseEntity<String> restablecerPassword(
-            @RequestBody RestablecerPasswordRequest request) {
-        try {
-            restablecerPassword.ejecutar(request);
-            return ResponseEntity.ok(
-                    "Contraseña actualizada correctamente");
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage());
-        }
+    @PostMapping("/restablecerPassword")
+    public ResponseEntity<String> restablecerPassword(@RequestBody RestablecerPasswordRequest request) {
+        restablecerPassword.ejecutar(request);
+        return ResponseEntity.ok("Contraseña actualizada correctamente");   
     }
 }

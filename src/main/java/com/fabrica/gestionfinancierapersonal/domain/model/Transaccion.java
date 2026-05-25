@@ -2,11 +2,12 @@ package com.fabrica.gestionfinancierapersonal.domain.model;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.MontoMayorException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaInvalidaParaTransaccionException;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
 
 import jakarta.persistence.*;
@@ -47,23 +48,23 @@ public class Transaccion {
             Categoria categoria, UUID transferenciaId) {
 
         if (monto <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0");
+            throw new MontoMayorException("El monto debe ser mayor a 0");
         }
 
         if (tipo == null) {
-            throw new IllegalArgumentException("El Tipo es obligatorio");
+            throw new CampoObligatorioException("El Tipo es obligatorio");
         }
 
         if (periodicidad == null) {
-            throw new IllegalArgumentException("La Periodicidad es obligatoria");
+            throw new CampoObligatorioException("La Periodicidad es obligatoria");
         }
 
         if (categoria == null) {
-            throw new IllegalArgumentException("La categoría es obligatoria");
+            throw new CampoObligatorioException("La categoría es obligatoria");
         }
 
         if (!categoria.getTipo().equals(tipo)) {
-            throw new IllegalArgumentException("La categoría no coincide con el tipo de transacción");
+            throw new CategoriaInvalidaParaTransaccionException("La categoría no coincide con el tipo de transacción");
         }
 
         this.idTransaccion = UUID.randomUUID();

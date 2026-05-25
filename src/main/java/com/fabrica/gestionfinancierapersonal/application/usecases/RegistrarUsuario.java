@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.CorreoYaRegistradoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.TelefonoYaRegistradoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsernameYaExisteException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorCorreo;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorContrasena;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorNombre;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorTelefono;
-
 
 @Service
 public class RegistrarUsuario {
@@ -22,9 +24,10 @@ public class RegistrarUsuario {
     private final ValidadorNombre validadorNombre;
     private final ValidadorTelefono validadorTelefono;
 
-
-    public RegistrarUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder, ValidadorCorreo validadorCorreo,
-        ValidadorContrasena validadorContrasena, ValidadorNombre validadorNombre, ValidadorTelefono validadorTelefono) {
+    public RegistrarUsuario(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder,
+            ValidadorCorreo validadorCorreo,
+            ValidadorContrasena validadorContrasena, ValidadorNombre validadorNombre,
+            ValidadorTelefono validadorTelefono) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
         this.validadorCorreo = validadorCorreo;
@@ -36,14 +39,18 @@ public class RegistrarUsuario {
     public RegistrarUsuarioResponse ejecutar(RegistrarUsuarioRequest request) {
 
         if (usuarioRepository.buscarPorUsername(request.username()).isPresent()) {
-            throw new IllegalArgumentException("El username ya existe");
+            throw new UsernameYaExisteException("El username ya existe");
         }
 
-        if (usuarioRepository.buscarPorCorreo(request.correo()).isPresent()) {
-            throw new IllegalArgumentException("El correo ya está registrado");
+        if (usuarioRepository.existePorCorreo(request.correo())) {
+            throw new CorreoYaRegistradoException("El correo ya está registrado");
         }
 
-         // Validar campos basicos
+        if (usuarioRepository.existePorTelefono(request.telefono())) {
+            throw new TelefonoYaRegistradoException("El teléfono ya está registrado");
+        }
+
+        // Validar campos basicos
         validarCamposObligatorios(request);
 
         // HASH

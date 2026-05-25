@@ -7,6 +7,7 @@ import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 import com.fabrica.gestionfinancierapersonal.domain.enums.PeriodoPresupuesto;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 
 @Component
@@ -15,13 +16,13 @@ public class ConvertidorEnums {
     // Convierte un String a TipoCuenta
     public TipoCuenta convertirATipoCuenta(String tipo) {
         if (tipo == null || tipo.isBlank()) {
-            throw new IllegalArgumentException("El tipo de cuenta no puede estar vacío");
+            throw new CampoObligatorioException("El tipo de cuenta no puede estar vacío");
         }
 
         try {
             return TipoCuenta.valueOf(tipo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "Tipo de cuenta inválido. Valores válidos: " + obtenerValoresTipoCuenta());
         }
     }
@@ -30,13 +31,13 @@ public class ConvertidorEnums {
     // Convierte un String a Moneda
     public Moneda convertirAMoneda(String moneda) {
         if (moneda == null || moneda.isBlank()) {
-            throw new IllegalArgumentException("La moneda no puede estar vacía");
+            throw new CampoObligatorioException("La moneda no puede estar vacía");
         }
 
         try {
             return Moneda.valueOf(moneda.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "Moneda inválida. Valores válidos: " + obtenerValoresMoneda());
         }
     }
@@ -44,13 +45,13 @@ public class ConvertidorEnums {
     // Convierte un String a TipoTransaccion
     public TipoTransaccion convertirATipoTransaccion(String tipo) {
         if (tipo == null || tipo.isBlank()) {
-            throw new IllegalArgumentException("El tipo de transacción no puede estar vacío");
+            throw new CampoObligatorioException("El tipo de transacción no puede estar vacío");
         }
 
         try {
             return TipoTransaccion.valueOf(tipo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "Tipo de transacción inválido. Valores válidos: " + obtenerValoresTipoTransaccion());
         }
     }
@@ -58,13 +59,13 @@ public class ConvertidorEnums {
     // Convierte un String a Periodicidad
     public Periodicidad convertirAPeriodicidad(String periodicidad) {
         if (periodicidad == null || periodicidad.isBlank()) {
-            throw new IllegalArgumentException("La periodicidad no puede estar vacía");
+            throw new CampoObligatorioException("La periodicidad no puede estar vacía");
         }
 
         try {
             return Periodicidad.valueOf(periodicidad.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "Periodicidad inválida. Valores válidos: " + obtenerValoresPeriodicidad());
         }
     }
@@ -72,12 +73,12 @@ public class ConvertidorEnums {
     // Convierte un String a PeriodoPresupuesto
     public PeriodoPresupuesto convertirAPeriodoPresupuesto(String periodo) {
         if (periodo == null || periodo.isBlank()) {
-            throw new IllegalArgumentException("El período del presupuesto no puede estar vacío");
+            throw new CampoObligatorioException("El período del presupuesto no puede estar vacío");
         }
         try {
             return PeriodoPresupuesto.valueOf(periodo.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "Período de presupuesto inválido. Valores válidos: " + obtenerValoresPeriodoPresupuesto());
         }
     }

@@ -6,6 +6,9 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransacc
 import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransaccionResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaInvalidaParaTransaccionException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaNoEncontradaException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.transaccion.TransaccionNoExistenteException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
 
@@ -23,20 +26,20 @@ public class ActualizarTransaccion {
     public ActualizarTransaccionResponse ejecutar(ActualizarTransaccionRequest request) {
 
         Transaccion transaccion = transaccionRepository.buscarPorId(request.idTransaccion())
-                .orElseThrow(() -> new RuntimeException("Transacción no encontrada"));
+                .orElseThrow(() -> new TransaccionNoExistenteException("Transacción no encontrada"));
 
         if (!transaccion.getCuenta().getUsuario().getIdUsuario().equals(request.idUsuario())) {
-            throw new RuntimeException("La transacción no pertenece al usuario");
+            throw new TransaccionNoExistenteException("La transacción no pertenece al usuario");
         }
 
         if (request.idCategoria() != null) {
 
             Categoria categoria = categoriaRepository
                     .buscarPorIdYUsuario(request.idCategoria(), request.idUsuario())
-                    .orElseThrow(() -> new RuntimeException("Categoría no válida"));
+                    .orElseThrow(() -> new CategoriaNoEncontradaException("Categoría no válida"));
 
             if (!categoria.getTipo().equals(transaccion.getTipo())) {
-                throw new RuntimeException("Tipo de categoría no coincide");
+                throw new CategoriaInvalidaParaTransaccionException("Tipo de categoría no coincide");
             }
 
             // Se actualiza si no tiene categoria o si es diferente
@@ -48,12 +51,12 @@ public class ActualizarTransaccion {
             }
 
         } else if (transaccion.getCategoria() == null) {
-            throw new RuntimeException("La transacción debe tener una categoría válida");
+            throw new CategoriaInvalidaParaTransaccionException("La transacción debe tener una categoría válida");
         }
 
         // Validar que siempre haya categoría después de actualizar
         if (transaccion.getCategoria() == null) {
-            throw new RuntimeException("La transacción debe tener una categoría válida");
+            throw new CategoriaInvalidaParaTransaccionException("La transacción debe tener una categoría válida");
         }
 
         return new ActualizarTransaccionResponse(

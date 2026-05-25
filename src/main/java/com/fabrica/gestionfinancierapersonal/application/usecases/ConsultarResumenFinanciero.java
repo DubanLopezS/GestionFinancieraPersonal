@@ -1,13 +1,11 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.ResumenFinancieroResponse;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsuarioNoEncontradoException;
 
 @Service
 

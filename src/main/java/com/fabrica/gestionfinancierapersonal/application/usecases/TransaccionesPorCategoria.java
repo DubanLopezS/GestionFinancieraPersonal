@@ -9,6 +9,9 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.MovimientosCategor
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.CuentaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaNoExistenteException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.cuenta.CuentaNoExistenteException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
@@ -31,23 +34,23 @@ public class TransaccionesPorCategoria {
 
 
         if (idCuenta == null || idCategoria == null || idUsuario == null) {
-            throw new RuntimeException("Los parámetros son obligatorios");
+            throw new CampoObligatorioException("Los parámetros son obligatorios");
         }
 
         Cuenta cuenta = cuentaRepository.buscarPorId(idCuenta)
-                .orElseThrow(() -> new RuntimeException("La cuenta no existe"));
+                .orElseThrow(() -> new CuentaNoExistenteException("La cuenta no existe"));
 
         if (!cuenta.getUsuario().getIdUsuario().equals(idUsuario)) {
-            throw new RuntimeException("La cuenta no le pertenece al usuario");
+            throw new CuentaNoExistenteException("La cuenta no le pertenece al usuario");
         }
 
         Categoria categoria = categoriaRepository.buscarPorId(idCategoria)
-                .orElseThrow(() -> new RuntimeException("Categoría no existe"));
+                .orElseThrow(() -> new CategoriaNoExistenteException("Categoría no existe"));
 
         if (categoria.getUsuario() != null &&
                 !categoria.getUsuario().getIdUsuario().equals(idUsuario)) {
 
-            throw new RuntimeException("La categoría no pertenece al usuario");
+            throw new CategoriaNoExistenteException("La categoría no pertenece al usuario");
         }
 
         List<Transaccion> transacciones = transaccionRepository.buscarPorCuentaCategoriaYUsuario(idCuenta, idCategoria,

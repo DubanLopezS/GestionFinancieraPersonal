@@ -1,4 +1,4 @@
-package com.fabrica.gestionfinancierapersonal.application.exceptions;
+package com.fabrica.gestionfinancierapersonal.domain.exceptions;
 
 public class AccesoDenegadoException extends RuntimeException {
 

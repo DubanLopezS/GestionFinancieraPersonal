@@ -1,6 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.domain.validators;
 
 import org.springframework.stereotype.Component;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 @Component
 public class ValidadorNombre {
@@ -10,11 +11,11 @@ public class ValidadorNombre {
     // Valida que el nombre tenga formato correcto
     public void validar(String nombre) {
         if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre no puede estar vacío");
+            throw new CampoObligatorioException("El nombre no puede estar vacío");
         }
 
         if (!esValido(nombre)) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "El nombre debe tener entre 3 y 15 caracteres, solo letras, espacios, guiones y apóstrofos");
         }
     }

@@ -1,6 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.domain.validators;
 
 import org.springframework.stereotype.Component;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 @Component
 public class ValidadorTelefono {
@@ -10,11 +11,11 @@ public class ValidadorTelefono {
     // Valida que el teléfono tenga formato correcto
     public void validar(String telefono) {
         if (telefono == null || telefono.isBlank()) {
-            throw new IllegalArgumentException("El teléfono no puede estar vacío");
+            throw new CampoObligatorioException("El teléfono no puede estar vacío");
         }
 
         if (!esValido(telefono)) {
-            throw new IllegalArgumentException("El teléfono debe tener exactamente 10 dígitos numéricos");
+            throw new CampoObligatorioException("El teléfono debe tener exactamente 10 dígitos numéricos");
         }
     }
 

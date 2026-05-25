@@ -3,15 +3,13 @@ package com.fabrica.gestionfinancierapersonal.domain.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.MontoMayorException;
 import com.fabrica.gestionfinancierapersonal.domain.strategy.OperacionSaldo;
 import com.fabrica.gestionfinancierapersonal.domain.strategy.SaldoFactory;
-
 import jakarta.persistence.*;
-
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,17 +44,17 @@ public class Cuenta {
     public Cuenta(String nombre, TipoCuenta tipo, Moneda moneda, Usuario usuario) {
 
         if (tipo == null) {
-            throw new IllegalArgumentException("Tipo de cuenta obligatorio");
+            throw new CampoObligatorioException("Tipo de cuenta obligatorio");
         }
 
         if (moneda == null) {
-            throw new IllegalArgumentException("La moneda es obligatoria");
+            throw new CampoObligatorioException("La moneda es obligatoria");
         }
         this.tipo = tipo;
 
         if (tipo == TipoCuenta.BANCARIA) {
             if (nombre == null || nombre.isBlank()) {
-                throw new IllegalArgumentException("El nombre es obligatorio para cuentas bancarias");
+                throw new CampoObligatorioException("El nombre es obligatorio para cuentas bancarias");
             }
             this.nombre = nombre;
         } else {
@@ -72,7 +70,7 @@ public class Cuenta {
     public void registrarSaldoInicial(double monto) {
 
         if (monto < 0) {
-            throw new IllegalArgumentException("Saldo inicial no puede ser negativo");
+            throw new MontoMayorException("Saldo inicial no puede ser negativo");
         }
 
         if (this.saldo != 0) {
@@ -104,11 +102,11 @@ public class Cuenta {
     private void validarTransaccion(Transaccion transaccion) {
 
         if (transaccion == null) {
-            throw new IllegalArgumentException("Transacción inválida");
+            throw new CampoObligatorioException("Transacción inválida");
         }
 
         if (transaccion.getMonto() <= 0) {
-            throw new IllegalArgumentException("El monto debe ser mayor a 0");
+            throw new CampoObligatorioException("El monto debe ser mayor a 0");
         }
     }
 }

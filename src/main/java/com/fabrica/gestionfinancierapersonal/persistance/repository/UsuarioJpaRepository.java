@@ -21,8 +21,7 @@ public interface UsuarioJpaRepository extends JpaRepository<Usuario, UUID> {
     Optional<Usuario> findByUsername(String username);
 
     @Query("""
-                SELECT u
-                FROM Usuario u
+                SELECT u FROM Usuario u
                 WHERE u.idUsuario <> :idAdmin
                 AND u.rol <> :rol
             """)
@@ -31,10 +30,8 @@ public interface UsuarioJpaRepository extends JpaRepository<Usuario, UUID> {
             @Param("rol") Rol rol,
             Pageable pageable);
 
-            
     @Query("""
-                SELECT u
-                FROM Usuario u
+                SELECT u FROM Usuario u
                 WHERE u.idUsuario <> :idAdmin
                 AND u.rol <> :rol
                 AND (
@@ -43,9 +40,10 @@ public interface UsuarioJpaRepository extends JpaRepository<Usuario, UUID> {
                     OR LOWER(u.username) LIKE LOWER(CONCAT('%', :filtro, '%'))
                 )
             """)
-    Page<Usuario> buscarUsuariosConFiltro(
-            @Param("idAdmin") UUID idAdmin,
-            @Param("rol") Rol rol,
-            @Param("filtro") String filtro,
-            Pageable pageable);
+    Page<Usuario> buscarUsuariosConFiltro(@Param("idAdmin") UUID idAdmin, @Param("rol") Rol rol,
+            @Param("filtro") String filtro, Pageable pageable);
+
+    boolean existsByCorreo(String correo);
+
+    boolean existsByTelefono(String telefono);
 }

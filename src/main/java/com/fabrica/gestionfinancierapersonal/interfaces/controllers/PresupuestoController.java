@@ -54,9 +54,7 @@ public class PresupuestoController {
                         @RequestParam UUID idUsuario,
                         @RequestParam UUID idCategoria) {
                 return ResponseEntity.ok(
-                                consultarPresupuesto.ejecutar(
-                                                idUsuario,
-                                                idCategoria));
+                                consultarPresupuesto.ejecutar(idUsuario, idCategoria));
         }
 
         // Editar presupuesto

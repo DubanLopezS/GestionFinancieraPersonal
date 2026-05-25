@@ -13,6 +13,10 @@ import com.fabrica.gestionfinancierapersonal.application.repository.TransaccionR
 import com.fabrica.gestionfinancierapersonal.application.services.ConversorMonedaService;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Periodicidad;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaNoExistenteException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.cuenta.CuentaNoExistenteException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.cuenta.CuentasDiferentesException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.transaccion.SaldoInsuficienteException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Transaccion;
@@ -40,18 +44,18 @@ public class TransferirDinero {
 
                 Cuenta origen = cuentaRepository
                                 .buscarPorIdYUsuario(request.idCuentaOrigen(), request.idUsuario())
-                                .orElseThrow(() -> new RuntimeException("Cuenta origen no encontrada"));
+                                .orElseThrow(() -> new CuentaNoExistenteException("Cuenta origen no encontrada"));
 
                 Cuenta destino = cuentaRepository
                                 .buscarPorIdYUsuario(request.idCuentaDestino(), request.idUsuario())
-                                .orElseThrow(() -> new RuntimeException("Cuenta destino no encontrada"));
+                                .orElseThrow(() -> new CuentaNoExistenteException("Cuenta destino no encontrada"));
 
                 if (origen.getIdCuenta().equals(destino.getIdCuenta())) {
-                        throw new RuntimeException("Las cuentas deben ser diferentes");
+                        throw new CuentasDiferentesException("Las cuentas deben ser diferentes");
                 }
 
                 if (origen.getSaldo() < request.monto()) {
-                        throw new RuntimeException("Saldo insuficiente");
+                        throw new SaldoInsuficienteException("Saldo insuficiente");
                 }
 
                 ConversionMonedaResponse conversion = conversorMonedaService.convertir(
@@ -62,11 +66,11 @@ public class TransferirDinero {
                 double montoDestino = conversion.montoConvertido();
                 Categoria salida = categoriaRepository
                                 .buscarPorNombreYEsSistemaTrue("Transferencia_Salida")
-                                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                                .orElseThrow(() -> new CategoriaNoExistenteException("Categoría no encontrada"));
 
                 Categoria entrada = categoriaRepository
                                 .buscarPorNombreYEsSistemaTrue("Transferencia_Entrada")
-                                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+                                .orElseThrow(() -> new CategoriaNoExistenteException("Categoría no encontrada"));
 
                 UUID transferenciaId = UUID.randomUUID();
 

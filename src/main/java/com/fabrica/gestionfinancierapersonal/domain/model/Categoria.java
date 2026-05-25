@@ -3,6 +3,7 @@ package com.fabrica.gestionfinancierapersonal.domain.model;
 import java.util.UUID;
 
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,13 +42,13 @@ public class Categoria {
 
     private void validar() {
         if (nombre == null || nombre.isBlank()) {
-            throw new IllegalArgumentException("El nombre es obligatorio");
+            throw new CampoObligatorioException("El nombre es obligatorio");
         }
         if (tipo == null) {
-            throw new IllegalArgumentException("El tipo es obligatorio");
+            throw new CampoObligatorioException("El tipo es obligatorio");
         }
         if (usuario == null) {
-            throw new IllegalArgumentException("El usuario es obligatorio");
+            throw new CampoObligatorioException("El usuario es obligatorio");
         }
     }
 }

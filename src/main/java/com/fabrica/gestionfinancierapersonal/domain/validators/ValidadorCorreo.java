@@ -1,6 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.domain.validators;
 
 import org.springframework.stereotype.Component;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 @Component
 public class ValidadorCorreo {
@@ -10,11 +11,11 @@ public class ValidadorCorreo {
     // Valida que el correo tenga formato correcto
     public void validar(String correo) {
         if (correo == null || correo.isBlank()) {
-            throw new IllegalArgumentException("El correo no puede estar vacío");
+            throw new CampoObligatorioException("El correo no puede estar vacío");
         }
 
         if (!esValido(correo)) {
-            throw new IllegalArgumentException("El formato del correo no es válido");
+            throw new CampoObligatorioException("El formato del correo no es válido");
         }
     }
 

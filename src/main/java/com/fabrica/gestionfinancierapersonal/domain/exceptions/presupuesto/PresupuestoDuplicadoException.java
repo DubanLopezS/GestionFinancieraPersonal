@@ -1,4 +1,4 @@
-package com.fabrica.gestionfinancierapersonal.application.exceptions.presupuesto;
+package com.fabrica.gestionfinancierapersonal.domain.exceptions.presupuesto;
 
 public class PresupuestoDuplicadoException extends RuntimeException {
 

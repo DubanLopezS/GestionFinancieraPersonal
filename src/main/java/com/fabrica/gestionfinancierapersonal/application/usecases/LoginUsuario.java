@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.LoginUsuarioResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.CredencialesInvalidasException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorContrasena;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorCorreo;
@@ -34,7 +35,7 @@ public class LoginUsuario {
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.buscarPorCorreo(request.correo())
-                .orElseThrow(() -> new IllegalArgumentException("Credenciales inválidas"));
+                .orElseThrow(() -> new CredencialesInvalidasException("Credenciales inválidas"));
 
                 
         // Validad contraseña
@@ -42,7 +43,7 @@ public class LoginUsuario {
                 request.contrasena(),
                 usuario.getContrasena());
         if (!coincide) {
-            throw new RuntimeException("Credenciales inválidas");
+            throw new CredencialesInvalidasException("Credenciales inválidas");
         }
 
         return new LoginUsuarioResponse(

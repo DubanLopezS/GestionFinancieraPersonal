@@ -71,4 +71,14 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
                 filtro,
                 pageable);
     }
+
+    @Override
+    public boolean existePorCorreo(String correo) {
+        return jpaRepository.existsByCorreo(correo);
+    }
+
+    @Override
+    public boolean existePorTelefono(String telefono) {
+        return jpaRepository.existsByTelefono(telefono);
+    }
 }

@@ -1,16 +1,14 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.ConsultarPresupuestoResponse;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.CategoriaNoEncontradaException;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.UsuarioNoEncontradoException;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.presupuesto.PresupuestoNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.PresupuestoRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.CategoriaNoEncontradaException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.presupuesto.PresupuestoNoEncontradoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Presupuesto;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;

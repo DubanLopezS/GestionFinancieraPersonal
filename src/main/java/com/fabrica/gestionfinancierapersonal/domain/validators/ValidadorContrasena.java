@@ -1,6 +1,7 @@
 package com.fabrica.gestionfinancierapersonal.domain.validators;
 
 import org.springframework.stereotype.Component;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
 
 @Component
 public class ValidadorContrasena {
@@ -8,11 +9,11 @@ public class ValidadorContrasena {
     //Valida que la contraseña cumpla criterios de seguridad
     public void validar(String contrasena) {
         if (contrasena == null || contrasena.isBlank()) {
-            throw new IllegalArgumentException("La contraseña no puede estar vacía");
+            throw new CampoObligatorioException("La contraseña no puede estar vacía");
         }
 
         if (!esValida(contrasena)) {
-            throw new IllegalArgumentException(
+            throw new CampoObligatorioException(
                     "La contraseña debe tener: mínimo 8 caracteres, mayúscula, minúscula, número y carácter especial");
         }
     }

@@ -24,5 +24,9 @@ public interface UsuarioRepository {
     void eliminar(UUID id);
 
     Page<Usuario> buscarUsuarios(UUID idAdmin, String filtro, Pageable pageable);
-    
+
+    boolean existePorCorreo(String correo);
+
+    boolean existePorTelefono(String telefono);
+
 }

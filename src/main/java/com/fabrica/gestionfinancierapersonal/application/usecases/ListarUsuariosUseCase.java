@@ -1,16 +1,14 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.UsuarioListadoResponse;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.AccesoDenegadoException;
-import com.fabrica.gestionfinancierapersonal.application.exceptions.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Rol;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.AccesoDenegadoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
 @Service

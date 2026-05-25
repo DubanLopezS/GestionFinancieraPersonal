@@ -1,12 +1,15 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCuentaRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCuentaResponse;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.Moneda;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoCuenta;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.MontoMayorException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.cuenta.TieneCuentaEfectivoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Cuenta;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ConvertidorEnums;
@@ -26,11 +29,11 @@ public class CrearCuenta {
 
         // Validaciones Basicas
         if (request.idUsuario() == null) {
-            throw new IllegalArgumentException("El ID del usuario es obligatorio");
+            throw new CampoObligatorioException("El ID del usuario es obligatorio");
         }
 
         if (request.saldoInicial() < 0) {
-            throw new IllegalArgumentException("El saldo inicial debe ser cero o positivo");
+            throw new MontoMayorException("El saldo inicial debe ser cero o positivo");
         }
 
         // Convertir STRING a ENUM 
@@ -40,19 +43,19 @@ public class CrearCuenta {
 
         if (tipo == TipoCuenta.BANCARIA &&
                 (request.nombre() == null || request.nombre().isBlank())) {
-            throw new IllegalArgumentException("El nombre es obligatorio para cuentas bancarias");
+            throw new CampoObligatorioException("El nombre es obligatorio para cuentas bancarias");
         }
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.buscarPorId(request.idUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado con ID: " + request.idUsuario()));
 
         if (tipo == TipoCuenta.EFECTIVO) {
             boolean yaTieneEfectivo = usuario.getCuentas().stream()
                     .anyMatch(c -> c.getTipo() == TipoCuenta.EFECTIVO);
 
             if (yaTieneEfectivo) {
-                throw new IllegalArgumentException("El usuario ya tiene una cuenta de efectivo");
+                throw new TieneCuentaEfectivoException("El usuario ya tiene una cuenta de efectivo");
             }
         }
 

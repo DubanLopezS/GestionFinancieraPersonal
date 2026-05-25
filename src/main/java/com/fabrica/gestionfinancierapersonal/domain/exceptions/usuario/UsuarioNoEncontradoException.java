@@ -1,4 +1,4 @@
-package com.fabrica.gestionfinancierapersonal.application.exceptions;
+package com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario;
 
 public class UsuarioNoEncontradoException extends RuntimeException {
 

@@ -10,15 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.CategoriaResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCategoriaRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCategoriaResponse;
 import com.fabrica.gestionfinancierapersonal.application.usecases.CrearCategoria;
 import com.fabrica.gestionfinancierapersonal.application.usecases.ListarCategoriasPorTipo;
-import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
-
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -36,12 +32,9 @@ public class CategoriaController {
     // Crear categoría
     @PostMapping("/crear")
     public ResponseEntity<CrearCategoriaResponse> crearCategoria(@RequestBody CrearCategoriaRequest request) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(crearCategoria.ejecutar(request));
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(crearCategoria.ejecutar(request));
     }
 
     @GetMapping("/listar")
@@ -49,12 +42,7 @@ public class CategoriaController {
             @RequestParam UUID idUsuario,
             @RequestParam String tipo) {
 
-        try {
-            TipoTransaccion tipoTransaccion = TipoTransaccion.valueOf(tipo.toUpperCase());
-            return ResponseEntity.ok(
-                    listarCategoriasPorTipo.ejecutar(idUsuario, tipoTransaccion));
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(
+                listarCategoriasPorTipo.ejecutar(idUsuario, tipo));
     }
 }

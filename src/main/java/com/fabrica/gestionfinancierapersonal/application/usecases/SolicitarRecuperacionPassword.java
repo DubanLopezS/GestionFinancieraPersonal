@@ -2,13 +2,12 @@ package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
-
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.SolicitarRecuperacionRequest;
 import com.fabrica.gestionfinancierapersonal.application.repository.RecuperacionPasswordRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.application.services.EmailService;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.CorreoNoRegistradoException;
 import com.fabrica.gestionfinancierapersonal.domain.model.RecuperacionPassword;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 
@@ -32,8 +31,7 @@ public class SolicitarRecuperacionPassword {
 
                 Usuario usuario = usuarioRepository
                                 .buscarPorCorreo(request.correo())
-                                .orElseThrow(() -> new RuntimeException(
-                                                "El correo no está registrado"));
+                                .orElseThrow(() -> new CorreoNoRegistradoException("El correo no está registrado"));
 
                 LocalDateTime ahora = LocalDateTime.now();
 

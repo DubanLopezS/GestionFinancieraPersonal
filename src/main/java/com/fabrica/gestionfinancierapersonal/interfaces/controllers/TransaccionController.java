@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransaccionRequest;
 import com.fabrica.gestionfinancierapersonal.application.dtos.ActualizarTransaccionResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.RegistrarTransaccionRequest;
@@ -37,33 +35,19 @@ public class TransaccionController {
     // Registrar transacción
     @PostMapping("/registrar")
     public ResponseEntity<RegistrarTransaccionResponse> registrar(@RequestBody RegistrarTransaccionRequest request) {
-        try {
-            return ResponseEntity.ok(registrarTransaccion.ejecutar(request));
-
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(registrarTransaccion.ejecutar(request));
     }
 
     @PutMapping("/actualizar")
-    public ResponseEntity<ActualizarTransaccionResponse> actualizar(
-            @RequestBody ActualizarTransaccionRequest request) {
-        try {
-            ActualizarTransaccionResponse response = actualizarTransaccion.ejecutar(request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public ResponseEntity<ActualizarTransaccionResponse> actualizar(@RequestBody ActualizarTransaccionRequest request) {
+        return ResponseEntity.ok(
+                actualizarTransaccion.ejecutar(request));
     }
 
     @PostMapping("/transferencias")
-    public ResponseEntity<TransferenciaResponse> transferir(
-            @RequestBody TransferenciaRequest request) {
-
-        try {
-            return ResponseEntity.ok(transferirDinero.ejecutar(request));
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public ResponseEntity<TransferenciaResponse> transferir(@RequestBody TransferenciaRequest request) {
+        return ResponseEntity.ok(
+                transferirDinero.ejecutar(request));
     }
 }

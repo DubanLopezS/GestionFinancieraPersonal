@@ -5,6 +5,9 @@ import com.fabrica.gestionfinancierapersonal.application.dtos.CrearCategoriaResp
 import com.fabrica.gestionfinancierapersonal.application.repository.CategoriaRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
 import com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.CampoObligatorioException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.categoria.NombreCategoriaEnUsoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.UsuarioNoEncontradoException;
 import com.fabrica.gestionfinancierapersonal.domain.model.Categoria;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ConvertidorEnums;
@@ -30,15 +33,15 @@ public class CrearCategoria {
 
         // Validaciones
         if (request.nombre() == null || request.nombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre es obligatorio");
+            throw new CampoObligatorioException("El nombre es obligatorio");
         }
 
         if (request.tipo() == null) {
-            throw new IllegalArgumentException("El tipo es obligatorio");
+            throw new CampoObligatorioException("El tipo es obligatorio");
         }
 
         if (request.idUsuario() == null) {
-            throw new IllegalArgumentException("El usuario es obligatorio");
+            throw new CampoObligatorioException("El usuario es obligatorio");
         }
 
 
@@ -49,11 +52,11 @@ public class CrearCategoria {
         Optional<Categoria> existente = categoriaRepository.buscarPorNombre(request.nombre().trim(), request.idUsuario());
 
         if (existente.isPresent()) {
-            throw new IllegalArgumentException("El nombre de la categoría ya está en uso");
+            throw new NombreCategoriaEnUsoException("El nombre de la categoría ya está en uso");
         }
 
         Usuario usuario = usuarioRepository.buscarPorId(request.idUsuario())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Usuario no encontrado"));
 
 
         // Crear categoría

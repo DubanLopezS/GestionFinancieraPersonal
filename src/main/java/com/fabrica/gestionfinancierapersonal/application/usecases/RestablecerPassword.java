@@ -1,13 +1,13 @@
 package com.fabrica.gestionfinancierapersonal.application.usecases;
 
 import java.time.LocalDateTime;
-
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.fabrica.gestionfinancierapersonal.application.dtos.RestablecerPasswordRequest;
 import com.fabrica.gestionfinancierapersonal.application.repository.RecuperacionPasswordRepository;
 import com.fabrica.gestionfinancierapersonal.application.repository.UsuarioRepository;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.CodigoInvalidoException;
+import com.fabrica.gestionfinancierapersonal.domain.exceptions.usuario.ContrasenasNoCoincidenException;
 import com.fabrica.gestionfinancierapersonal.domain.model.RecuperacionPassword;
 import com.fabrica.gestionfinancierapersonal.domain.model.Usuario;
 import com.fabrica.gestionfinancierapersonal.domain.validators.ValidadorContrasena;
@@ -34,24 +34,20 @@ public class RestablecerPassword {
 
                 RecuperacionPassword recuperacion = recuperacionPasswordRepository
                                 .buscarPorCodigo(request.codigo())
-                                .orElseThrow(() -> new RuntimeException(
-                                                "Código inválido"));
+                                .orElseThrow(() -> new CodigoInvalidoException("Código de recuperación inválido"));
 
                 if (recuperacion.getFechaExpiracion()
                                 .isBefore(LocalDateTime.now())) {
-                        throw new RuntimeException(
-                                        "El código expiró");
+                        throw new CodigoInvalidoException("El código de recuperación ha expirado");
                 }
 
                 if (recuperacion.isUsado()) {
-                        throw new RuntimeException(
-                                        "El código ya fue usado");
+                        throw new CodigoInvalidoException("El código ya fue usado");
                 }
 
                 if (!request.nuevaPassword()
                                 .equals(request.confirmacionPassword())) {
-                        throw new RuntimeException(
-                                        "Las contraseñas no coinciden");
+                        throw new ContrasenasNoCoincidenException("Las contraseñas no coinciden");
                 }
 
                 // Validar reglas de seguridad
