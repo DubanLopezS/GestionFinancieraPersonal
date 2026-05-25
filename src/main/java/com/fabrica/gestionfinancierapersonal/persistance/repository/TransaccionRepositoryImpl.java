@@ -75,4 +75,9 @@ public class TransaccionRepositoryImpl implements TransaccionRepository {
     public List<Transaccion> obtenerGastosPorCategoria(UUID usuarioId, UUID categoriaId) {
         return jpaRepository.obtenerGastosPorCategoria(usuarioId, categoriaId);
     }
+
+    @Override
+    public double sumarGastosPorMes(UUID usuarioId, int mes, int anio) {
+        return jpaRepository.sumarGastosPorMes(usuarioId, mes, anio);
+    }
 }

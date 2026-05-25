@@ -27,4 +27,6 @@ public interface TransaccionRepository {
     double sumarGastosPorCategoriaDelMes(UUID usuarioId, UUID categoriaId);
 
     List<Transaccion> obtenerGastosPorCategoria(UUID usuarioId, UUID categoriaId);
+
+    double sumarGastosPorMes(UUID usuarioId, int mes, int anio);
 }

@@ -67,6 +67,7 @@ public interface TransaccionJpaRepository extends JpaRepository<Transaccion, UUI
                         """)
         List<Categoria> obtenerCategoriaMayorGasto(UUID usuarioId);
 
+
         @Query("""
                         SELECT COALESCE(SUM(t.monto), 0.0) FROM Transaccion t
                         WHERE t.cuenta.usuario.idUsuario = :usuarioId
@@ -77,7 +78,7 @@ public interface TransaccionJpaRepository extends JpaRepository<Transaccion, UUI
                         """)
         double sumarGastosPorCategoriaDelMes(UUID usuarioId, UUID categoriaId);
 
-
+        
         @Query("""
                         SELECT t FROM Transaccion t
                         JOIN FETCH t.categoria
@@ -91,5 +92,17 @@ public interface TransaccionJpaRepository extends JpaRepository<Transaccion, UUI
                         ORDER BY t.fecha DESC
                         """)
         List<Transaccion> obtenerGastosPorCategoria(UUID usuarioId, UUID categoriaId);
+
+
+        @Query("""
+                        SELECT COALESCE(SUM(t.monto), 0.0)
+                        FROM Transaccion t
+                        WHERE t.cuenta.usuario.idUsuario = :usuarioId
+                        AND t.tipo = com.fabrica.gestionfinancierapersonal.domain.enums.TipoTransaccion.GASTO
+                        AND t.categoria.esSistema = false
+                        AND MONTH(t.fecha) = :mes
+                        AND YEAR(t.fecha) = :anio
+                        """)
+        double sumarGastosPorMes(UUID usuarioId, int mes, int anio);
 
 }

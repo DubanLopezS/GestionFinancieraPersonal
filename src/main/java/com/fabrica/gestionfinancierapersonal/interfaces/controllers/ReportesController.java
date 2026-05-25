@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fabrica.gestionfinancierapersonal.application.dtos.ComparacionGastosMesesResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.MayorGastoCategoriaResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.MovimientosCategoriaResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.ResumenCategoriasResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.ResumenFinancieroResponse;
 import com.fabrica.gestionfinancierapersonal.application.dtos.TransaccionCategoriaResponse;
+import com.fabrica.gestionfinancierapersonal.application.usecases.CompararGastosMensuales;
 import com.fabrica.gestionfinancierapersonal.application.usecases.ConsultarResumenFinanciero;
 import com.fabrica.gestionfinancierapersonal.application.usecases.ListarGastosPorCategoria;
 import com.fabrica.gestionfinancierapersonal.application.usecases.ObtenerCategoriaMayorGasto;
@@ -32,17 +34,20 @@ public class ReportesController {
     private final ConsultarResumenFinanciero consultarResumenFinanciero;
     private final ObtenerCategoriaMayorGasto obtenerCategoriaMayorGasto;
     private final ListarGastosPorCategoria listarGastosPorCategoria;
+    private final CompararGastosMensuales compararGastosMensuales;
 
     public ReportesController(ResumenGastosCategorias resumenGastosCategorias,
             TransaccionesPorCategoria obtenerTransaccionesPorCategoria,
             ConsultarResumenFinanciero consultarResumenFinanciero,
             ObtenerCategoriaMayorGasto obtenerCategoriaMayorGasto,
-            ListarGastosPorCategoria listarGastosPorCategoria) {
+            ListarGastosPorCategoria listarGastosPorCategoria,
+            CompararGastosMensuales compararGastosMensuales) {
         this.resumenGastosCategorias = resumenGastosCategorias;
         this.obtenerTransaccionesPorCategoria = obtenerTransaccionesPorCategoria;
         this.consultarResumenFinanciero = consultarResumenFinanciero;
         this.obtenerCategoriaMayorGasto = obtenerCategoriaMayorGasto;
         this.listarGastosPorCategoria = listarGastosPorCategoria;
+        this.compararGastosMensuales = compararGastosMensuales;
     }
 
     // Obtener resumen de categorias general de una cuenta
@@ -100,5 +105,13 @@ public class ReportesController {
             @RequestParam UUID idCategoria) {
         return ResponseEntity.ok(
                 listarGastosPorCategoria.ejecutar(idUsuario, idCategoria));
+    }
+
+    // Comparar gastos del mes actual con el mes anterior
+    @GetMapping("/compararMeses")
+    public ResponseEntity<ComparacionGastosMesesResponse> compararGastos(
+            @RequestParam UUID idUsuario) {
+        return ResponseEntity.ok(
+                compararGastosMensuales.ejecutar(idUsuario));
     }
 }
